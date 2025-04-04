@@ -14,7 +14,7 @@ namespace MovieTicketingSystem.Application.Mappings
         public UserProfile()
         {
             CreateMap<RegisterUserCommand, User>()
-                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
