@@ -61,14 +61,6 @@ namespace MovieTicketingSystem.Controllers
             return BadRequest(new { Message = "Theater Update Failed." });
         }
 
-        [HttpGet("{id}/cinema-hall")]
-        public async Task<IActionResult> GetAllCinemaHalls(string id)
-        {
-            var query = new GetCinemaHallsByTheaterIdQuery(id);
-            var result = await _mediator.Send(query);
-            return Ok(result);
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTheater(string id)
         {
@@ -81,6 +73,14 @@ namespace MovieTicketingSystem.Controllers
             return Ok(new { Message = "Theater Deleted Successfully" });
         }
 
+        [HttpGet("{id}/cinema-hall")]
+        public async Task<IActionResult> GetAllCinemaHalls(string id)
+        {
+            var query = new GetCinemaHallsByTheaterIdQuery(id);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+        
         [HttpGet("{id}/cinema-hall/{cinemaHallId}")]
         public async Task<IActionResult> GetCinemaHallById(string id,string cinemaHallId)
         {

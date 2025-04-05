@@ -50,5 +50,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITheaterRepository, TheaterRepository>();
+        services.AddScoped<IMovieRepository, MovieRepository>();
     }
 }
