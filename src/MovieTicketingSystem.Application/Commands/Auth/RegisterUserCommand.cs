@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using MediatR;
 
-namespace MovieTicketingSystem.Application.Commands
+namespace MovieTicketingSystem.Application.Commands.Auth
 {
     public class RegisterUserCommand : IRequest<bool>
     {

@@ -1,0 +1,110 @@
+Problem Statement
+Overview
+
+In this assignment, you will develop a simplified version of the BookMyShow website using Django. Your application will allow users to register, login, book tickets for events, manage event (Cancel or edit), create an event (Event Manager), and management of payments. The site will have different user roles and functionalities based on those roles.
+
+
+
+Instructions
+
+Use .NET Core Web API with clean architecture and CQRS pattern to set up your project.
+
+Configure a database MS Sql Server to store the necessary data.
+
+Implement the features outlined in the questions below.
+
+Ensure to write clean, modular, and well-documented code.
+
+Create unit tests to verify the functionalities.
+
+Use version control (Git) to track your progress and submit your assignment.
+
+
+
+APIs
+
+
+
+Login:
+
+Create an endpoint /login that accepts email and password.
+If the credentials are correct, return an access token (valid for 1 day) and a refresh token (valid for 7 days).
+If the credentials are incorrect, return an appropriate error message.
+
+
+Register:
+
+Create an endpoint /register that accepts email, name, username, and password.
+Store the user details in the database and assign a unique primary key (PK) to each user.
+Ensure the email is unique; if the email already exists, return an error message.
+
+
+Logout:
+
+Create an endpoint /logout that invalidates the user's token.
+
+
+User Roles:
+
+Implement user roles: User and Event Manager.
+Use a field in the user model to distinguish between the roles.
+
+
+Data Modeling:
+
+Design the database schema to support users, events, bookings, and other necessary entities.
+Create models for User, Event, Booking, etc.
+
+
+Ticket Booking:
+
+Create an endpoint /book-ticket that allows a user to book a ticket for an event.
+Ensure the event exists and has available tickets.
+
+
+Booking Management:
+
+Create endpoints for users to view their bookings and cancel them if needed.
+
+
+Event Management (Event Manager Role):
+
+Event Managers should be able to create events using an endpoint / create-event.
+Event details should include title, description, date, time, location (from pre-existing locations), and payment options.
+
+
+Event Filtering:
+
+Implement an endpoint /event that allows users to filter events based on location, date, or category.
+
+
+Email Notifications:
+
+Send email notifications to users for registration, booking confirmation, and event updates.
+
+
+Unit Test Cases:
+
+Write unit tests for all the endpoints to ensure their proper functionality.
+
+
+Bonus Module: Payment Simulation
+
+The payment simulation module includes making payments, reverting payments, and handling cases when a booking or event is cancelled.
+
+
+Making Payment:
+Create an endpoint /make-payment/ that simulates a payment process.
+This should include validating payment details and updating the booking status.
+
+
+Reverting Payment:
+
+Create an endpoint /revert-payment/ that simulates reverting a payment.
+This should update the booking status and update the payment status.
+
+
+Handling Cancellations:
+
+Ensure that when a booking is cancelled, the payment is reverted.
+If an event is cancelled, all associated bookings should be cancelled, and payments reverted.

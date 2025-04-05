@@ -4,6 +4,8 @@ using MovieTicketingSystem.Application.Extensions;
 using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Infrastructure.Extensions;
 using MovieTicketingSystem.Domain.Contracts.Services;
+using MovieTicketingSystem.Infrastructure.Persistence;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +15,25 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-var seeder = scope.ServiceProvider.GetRequiredService<ISeederService>();
-
-await seeder.Seed();
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<TicketingDbContext>();
+        context.Database.EnsureCreated();
+        
+        // Seed the database
+        var seeder = services.GetRequiredService<ISeederService>();
+        await seeder.Seed();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while creating the database.");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -32,3 +49,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using MovieTicketingSystem.Application.DTOs.Auth;
 using System;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,6 +9,11 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using MediatR;
+using MovieTicketingSystem.Application.Commands;
+using MovieTicketingSystem.Application.Commands.Auth;
+using MovieTicketingSystem.Domain.Contracts.Repository;
+using System.Text.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -17,148 +21,74 @@ namespace MovieTicketingSystem.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-       
         private readonly IMediator _mediator;
-        public AuthController(IMediator mediator)
+        private readonly IUserRepository _userRepository;
+        
+        public AuthController(IMediator mediator, IUserRepository userRepository)
         {
             _mediator = mediator;
+            _userRepository = userRepository;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = new IdentityUser
-            {
-                UserName = model.Email,
-                Email = model.Email
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddClaimAsync(user, new Claim("FirstName", model.FirstName));
-                await _userManager.AddClaimAsync(user, new Claim("LastName", model.LastName));
-
-                if (!string.IsNullOrEmpty(model.Role))
-                {
-                    if (!await _roleManager.RoleExistsAsync(model.Role))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(model.Role));
-                    }
-
-                    await _userManager.AddToRoleAsync(user, model.Role);
-                }
-
-                return Ok(new { Message = "User registered successfully" });
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return BadRequest(ModelState);
+            var result = await _mediator.Send(command);
+            
+            if (result)
+                return Ok(new { Message = "User registered successfully." });
+                
+            return BadRequest(new { Message = "Registration failed." });
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var tokenResponse = await _mediator.Send(command);
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-
-            if (result.Succeeded)
+            if(tokenResponse != null)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                var token = await GenerateJwtToken(user);
-
-                return Ok(new { Token = token });
+                return Ok(new { Result = tokenResponse, Message = "User logged in successfully." });
             }
-
-            return Unauthorized(new { Message = "Invalid login attempt" });
+            
+            return Unauthorized(new { Message = "Invalid login attempt." });
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgetPasswordCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var result = await _mediator.Send(command);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
-                return Ok(); // Don't reveal that the user does not exist
+            if(result != null)
+            {
+                return Ok(new { Result = result , Message = "If your email is registered, you will receive a password reset link." });
+            }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var encodedToken = HttpUtility.UrlEncode(token);
-            
-            // TODO: Send email with password reset link
-            // var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?token={encodedToken}&email={model.Email}";
-
-            return Ok(new { Message = "If your email is registered, you will receive a password reset link." });
+            return BadRequest(new { Message = "This email is not registered, please register first." });
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
-                return BadRequest("Invalid token.");
-
-            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
-            if (result.Succeeded)
-            {
+           var result = await _mediator.Send(command);
+            
+            if (result)
                 return Ok(new { Message = "Password has been reset successfully." });
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return BadRequest(ModelState);
+                
+            return BadRequest(new { Message = "Password reset failed. The token may be invalid or expired." });
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken()
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
+            var tokenResponse = await _mediator.Send(command);
 
-            var token = await GenerateJwtToken(user);
-            return Ok(new { Token = token });
-        }
-
-        private async Task<string> GenerateJwtToken(IdentityUser user)
-        {
-            var claims = new[]
+            if(tokenResponse != null)
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpireDays"]));
-
-            var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Issuer"],
-                claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                return Ok(new {Result = tokenResponse, Message = "Token refreshed successfully."});
+            }
+            
+            return Unauthorized(new { Message = "Invalid refresh token." });
         }
     }
 } 

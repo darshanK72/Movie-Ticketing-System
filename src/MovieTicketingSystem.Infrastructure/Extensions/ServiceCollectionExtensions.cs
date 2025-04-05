@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MovieTicketingSystem.Domain.Contracts.Repository;
 using MovieTicketingSystem.Domain.Contracts.Services;
 using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Infrastructure.Persistence;
+using MovieTicketingSystem.Infrastructure.Repositories;
 using MovieTicketingSystem.Infrastructure.Services;
 
 namespace MovieTicketingSystem.Infrastructure.Extensions;
@@ -16,32 +18,33 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("DefaultConnectionString");
         services.AddDbContext<TicketingDbContext>(options => 
-            options.UseSqlServer(connectionString)
-                .EnableSensitiveDataLogging());
+            options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null);
+            })
+            .EnableSensitiveDataLogging());
 
-        services.AddIdentityApiEndpoints<User>()
-        .AddEntityFrameworkStores<TicketingDbContext>()
-        .AddDefaultTokenProviders();
+        services.AddIdentity<User, IdentityRole>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+        })
+            .AddEntityFrameworkStores<TicketingDbContext>()
+            .AddDefaultTokenProviders()
+            .AddTokenProvider("Default", typeof(DataProtectorTokenProvider<User>));
 
-        // Add a dummy email sender for development
-        //services.AddScoped<IEmailSender<User>, DummyEmailSender>();
+        services.Configure<DataProtectionTokenProviderOptions>("Default", options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(1);
+        });
 
-        services.AddScoped<IMovieTicketingSystemSeeder, MovieTicketingSystemSeeder>();
-        //services.AddScoped<IMovieTicketingSystemRepository, MovieTicketingSystemRepository>();
-        //services.AddScoped<IDishesRepository, DishesRepository>();
-        //services.AddAuthorizationBuilder()
-        //    .AddPolicy(PolicyNames.HasNationality, 
-        //        builder => builder.RequireClaim(AppClaimTypes.Nationality, "German", "Polish"))
-        //    .AddPolicy(PolicyNames.AtLeast20,
-        //        builder => builder.AddRequirements(new MinimumAgeRequirement(20)))
-        //    .AddPolicy(PolicyNames.CreatedAtleast2MovieTicketingSystem, 
-        //        builder => builder.AddRequirements(new CreatedMultipleMovieTicketingSystemRequirement(2)));
-
-        //services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
-        //services.AddScoped<IAuthorizationHandler, CreatedMultipleMovieTicketingSystemRequirementHandler>();
-        //services.AddScoped<IRestaurantAuthorizationService, RestaurantAuthorizationService>();
-
-        //services.Configure<BlobStorageSettings>(configuration.GetSection("BlobStorage"));
-        //services.AddScoped<IBlobStorageService, BlobStorageService>();
+        services.AddScoped<ISeederService, SeederService>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 }
