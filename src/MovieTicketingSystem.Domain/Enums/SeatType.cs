@@ -4,9 +4,6 @@ namespace MovieTicketingSystem.Domain.Enums
     {
         Standard,
         Premium,
-        VIP,
-        Recliner,
-        Couple,
-        Wheelchair
+        Recliner
     }
 } 

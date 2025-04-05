@@ -9,11 +9,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using MediatR;
-using MovieTicketingSystem.Application.Commands;
 using MovieTicketingSystem.Application.Commands.Auth;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -51,6 +49,19 @@ namespace MovieTicketingSystem.Controllers
                 return Ok(new { Result = tokenResponse, Message = "User logged in successfully." });
             }
             
+            return Unauthorized(new { Message = "Invalid login attempt." });
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Login([FromBody] LogoutUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (result)
+            {
+                return Ok(new {Message = "User logged out successfully." });
+            }
+
             return Unauthorized(new { Message = "Invalid login attempt." });
         }
 

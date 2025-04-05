@@ -8,27 +8,25 @@ using FluentValidation;
 using MediatR;
 using MovieTicketingSystem.Application.Commands.Auth;
 using MovieTicketingSystem.Domain.Contracts.Repository;
-using MovieTicketingSystem.Domain.DTOs;
 
 namespace MovieTicketingSystem.Application.Handlers.Auth
 {
-    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, TokenResponse?>
+    public class LogoutUserCommandHandler : IRequestHandler<LogoutUserCommand,bool>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IValidator<RefreshTokenCommand> _validator;
+        private readonly IValidator<LogoutUserCommand> _validator;
         private readonly IMapper _mapper;
 
-        public RefreshTokenCommandHandler(IUserRepository userRepository, IValidator<RefreshTokenCommand> validator, IMapper mapper)
+        public LogoutUserCommandHandler(IUserRepository userRepository, IValidator<LogoutUserCommand> validator, IMapper mapper)
         {
             _userRepository = userRepository;
             _validator = validator;
             _mapper = mapper;
         }
-
-        public async Task<TokenResponse?> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(LogoutUserCommand request, CancellationToken cancellationToken)
         {
-            if (request == null || request.RefreshToken == null || request.Email == null)
-                return null;
+            if (request == null || request.Email == null)
+                return false;
 
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 
@@ -37,7 +35,7 @@ namespace MovieTicketingSystem.Application.Handlers.Auth
                 throw new ValidationException(validationResult.Errors);
             }
 
-            return await _userRepository.RefreshToken(request.RefreshToken,request.Email);
+            return await _userRepository.LogoutUser(request.Email);
         }
     }
 }

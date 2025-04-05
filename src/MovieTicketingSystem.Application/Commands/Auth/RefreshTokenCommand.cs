@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
-using MovieTicketingSystem.Domain.DTOs.Auth;
+using MovieTicketingSystem.Domain.DTOs;
 
 namespace MovieTicketingSystem.Application.Commands.Auth
 {

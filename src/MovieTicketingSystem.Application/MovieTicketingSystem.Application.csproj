@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Handlers\Theaters\UpdateTheaterCommandHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 	 <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 	 <PackageReference Include="MediatR" Version="12.2.0" />
@@ -14,10 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MovieTicketingSystem.Domain\MovieTicketingSystem.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using MovieTicketingSystem.Domain.Entities;
 using System.Text.Json;
-using MovieTicketingSystem.Domain.DTOs.Auth;
+using MovieTicketingSystem.Domain.DTOs;
 
 namespace MovieTicketingSystem.Infrastructure.Repositories
 {
@@ -81,6 +81,17 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 };
             }
             return null;
+        }
+
+        public async Task<bool> LogoutUser(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return false;
+
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            return true;
         }
 
         public async Task<string?> ForgotPassword(string email)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MovieTicketingSystem.Application.Services;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using MovieTicketingSystem.Domain.Contracts.Services;
 using MovieTicketingSystem.Domain.Entities;
@@ -45,6 +46,9 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<ISeederService, SeederService>();
+        services.AddSingleton<ISeatGenerationService,SeatGenerationService>();
+
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITheaterRepository, TheaterRepository>();
     }
 }

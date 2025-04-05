@@ -4,9 +4,9 @@ using MediatR;
 using MovieTicketingSystem.Application.Commands.Auth;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using AutoMapper;
-using MovieTicketingSystem.Domain.DTOs.Auth;
 using FluentValidation;
 using MovieTicketingSystem.Application.Validators.Auth;
+using MovieTicketingSystem.Domain.DTOs;
 
 namespace MovieTicketingSystem.Application.Handlers.Auth
 {

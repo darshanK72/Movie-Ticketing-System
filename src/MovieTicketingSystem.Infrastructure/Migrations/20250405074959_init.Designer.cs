@@ -541,7 +541,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.ToTable("Shows");
                 });
 
-            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Theater", b =>
+            modelBuilder.Entity("Theater", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -763,7 +763,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.CinemaHall", b =>
                 {
-                    b.HasOne("MovieTicketingSystem.Domain.Entities.Theater", "Theater")
+                    b.HasOne("Theater", "Theater")
                         .WithMany("CinemaHalls")
                         .HasForeignKey("TheaterId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -821,7 +821,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Navigation("ShowManager");
                 });
 
-            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Theater", b =>
+            modelBuilder.Entity("Theater", b =>
                 {
                     b.HasOne("MovieTicketingSystem.Domain.Entities.Address", "Address")
                         .WithMany()
@@ -854,7 +854,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Navigation("Bookings");
                 });
 
-            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Theater", b =>
+            modelBuilder.Entity("Theater", b =>
                 {
                     b.Navigation("CinemaHalls");
                 });
