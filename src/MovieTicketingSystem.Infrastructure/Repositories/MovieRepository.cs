@@ -21,16 +21,30 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<IEnumerable<Movie>> GetAllMoviesAsync()
         {
-            return await _context.Movies.ToListAsync();
+            return await _context.Movies.Include(m => m.Genres).Include(m => m.Languages).ToListAsync();
         }
 
         public async Task<Movie?> GetMovieByIdAsync(string id)
         {
-            return await _context.Movies.FirstOrDefaultAsync(m => m.Id.ToString() == id);
+            return await _context.Movies.Include(m => m.Genres).Include(m => m.Languages).FirstOrDefaultAsync(m => m.Id.ToString() == id);
         }
 
-        public async Task<bool> CreateMovieAsync(Movie movie)
+        public async Task<bool> CreateMovieAsync(Movie movie,IEnumerable<string> genreIds,IEnumerable<string> languageIds)
         {
+            if (genreIds != null && genreIds.Any())
+            {
+                var genreGuids = genreIds.Select(id => Guid.Parse(id)).ToList();
+                var genres = await _context.Genres.Where(g => genreGuids.Contains(g.Id)).ToListAsync();
+                movie.Genres = genres;
+            }
+
+            if (languageIds != null && languageIds.Any())
+            {
+                var languageGuids = languageIds.Select(id => Guid.Parse(id)).ToList();
+                var languages = await _context.Languages.Where(l => languageGuids.Contains(l.Id)).ToListAsync();
+                movie.Languages = languages;
+            }
+
             await _context.Movies.AddAsync(movie);
             await _context.SaveChangesAsync();
             return true;
@@ -38,6 +52,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<bool> UpdateMovieAsync(Movie movie)
         {
+            movie.UpdatedAt = DateTime.Now;
             _context.Movies.Update(movie);
             await _context.SaveChangesAsync();
             return true;
@@ -46,7 +61,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteMovieAsync(string id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _context.Movies.FindAsync(Guid.Parse(id));
             if (movie == null)
                 return false;
 
@@ -57,29 +72,29 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<IEnumerable<Movie>> GetActiveMoviesAsync()
         {
-            return await _context.Movies
+            return await _context.Movies.Include(m => m.Genres).Include(m => m.Languages)
                 .Where(m => m.IsActive)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre)
         {
-            return await _context.Movies
-                .Where(m => m.Genre == genre && m.IsActive)
+            return await _context.Movies.Include(m => m.Genres).Include(m => m.Languages)
+                .Where(m => m.Genres!.Select(g => g.Name).Contains(genre) && m.IsActive)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Movie>> GetMoviesByLanguageAsync(string language)
         {
-            return await _context.Movies
-                .Where(m => m.Language == language && m.IsActive)
+            return await _context.Movies.Include(m => m.Genres).Include(m => m.Languages)
+                .Where(m => m.Languages!.Select(l => l.Name).Contains(language) && m.IsActive)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Movie>> GetMoviesByRatingAsync(MovieRating rating)
+        public async Task<IEnumerable<Movie>> GetMoviesByRatingAsync(CertificateRating rating)
         {
-            return await _context.Movies
-                .Where(m => m.Rating == rating && m.IsActive)
+            return await _context.Movies.Include(m => m.Genres).Include(m => m.Languages)
+                .Where(m => m.CertificateRating == rating && m.IsActive)
                 .ToListAsync();
         }
     }

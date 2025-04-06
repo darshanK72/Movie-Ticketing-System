@@ -22,19 +22,34 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BookingSeat", b =>
+            modelBuilder.Entity("GenreMovie", b =>
                 {
-                    b.Property<Guid>("BookingsId")
+                    b.Property<Guid>("GenresId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SeatsId")
+                    b.Property<Guid>("MoviesId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("BookingsId", "SeatsId");
+                    b.HasKey("GenresId", "MoviesId");
 
-                    b.HasIndex("SeatsId");
+                    b.HasIndex("MoviesId");
 
-                    b.ToTable("BookingSeat");
+                    b.ToTable("MovieGenres", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageMovie", b =>
+                {
+                    b.Property<Guid>("LanguagesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MoviesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("LanguagesId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("MovieLanguages", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -193,6 +208,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -234,6 +252,12 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpirationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("NumberOfTickets")
                         .HasColumnType("int");
@@ -315,16 +339,74 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.ToTable("CinemaHalls");
                 });
 
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Genre", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Language", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+                });
+
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Movie", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Cast")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                    b.Property<int>("CertificateRating")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -341,25 +423,12 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("int");
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PosterUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
@@ -375,6 +444,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<double>("ViewerRating")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -400,6 +472,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
@@ -408,7 +483,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime?>("RefundDate")
+                    b.Property<DateTime>("RefundDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RefundReason")
@@ -462,6 +537,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<Guid>("TheaterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -471,6 +549,8 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CinemaHallId");
+
+                    b.HasIndex("TheaterId");
 
                     b.ToTable("Seats");
                 });
@@ -496,12 +576,11 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
@@ -515,11 +594,6 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("TotalSeats")
                         .HasColumnType("int");
@@ -538,7 +612,48 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.ToTable("Shows");
                 });
 
-            modelBuilder.Entity("Theater", b =>
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.ShowSeat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BookingStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SeatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ShowId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("SeatId");
+
+                    b.HasIndex("ShowId");
+
+                    b.ToTable("ShowSeats");
+                });
+
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Theater", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -673,17 +788,32 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BookingSeat", b =>
+            modelBuilder.Entity("GenreMovie", b =>
                 {
-                    b.HasOne("MovieTicketingSystem.Domain.Entities.Booking", null)
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Genre", null)
                         .WithMany()
-                        .HasForeignKey("BookingsId")
+                        .HasForeignKey("GenresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieTicketingSystem.Domain.Entities.Seat", null)
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Movie", null)
                         .WithMany()
-                        .HasForeignKey("SeatsId")
+                        .HasForeignKey("MoviesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LanguageMovie", b =>
+                {
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Language", null)
+                        .WithMany()
+                        .HasForeignKey("LanguagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -760,7 +890,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.CinemaHall", b =>
                 {
-                    b.HasOne("Theater", "Theater")
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Theater", "Theater")
                         .WithMany("CinemaHalls")
                         .HasForeignKey("TheaterId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -788,7 +918,15 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Theater", "Theater")
+                        .WithMany()
+                        .HasForeignKey("TheaterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("CinemaHall");
+
+                    b.Navigation("Theater");
                 });
 
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Show", b =>
@@ -818,7 +956,33 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Navigation("ShowManager");
                 });
 
-            modelBuilder.Entity("Theater", b =>
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.ShowSeat", b =>
+                {
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Booking", "Booking")
+                        .WithMany("ShowSeats")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Seat", "Seat")
+                        .WithMany("ShowSeats")
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MovieTicketingSystem.Domain.Entities.Show", "Show")
+                        .WithMany("ShowSeats")
+                        .HasForeignKey("ShowId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Seat");
+
+                    b.Navigation("Show");
+                });
+
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Theater", b =>
                 {
                     b.HasOne("MovieTicketingSystem.Domain.Entities.Address", "Address")
                         .WithMany()
@@ -832,6 +996,8 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Booking", b =>
                 {
                     b.Navigation("Payments");
+
+                    b.Navigation("ShowSeats");
                 });
 
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.CinemaHall", b =>
@@ -846,12 +1012,19 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Navigation("Shows");
                 });
 
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Seat", b =>
+                {
+                    b.Navigation("ShowSeats");
+                });
+
             modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Show", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("ShowSeats");
                 });
 
-            modelBuilder.Entity("Theater", b =>
+            modelBuilder.Entity("MovieTicketingSystem.Domain.Entities.Theater", b =>
                 {
                     b.Navigation("CinemaHalls");
                 });

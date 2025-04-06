@@ -18,13 +18,7 @@ namespace MovieTicketingSystem.Application.Handlers.Movies
 
         public async Task<bool> Handle(DeleteMovieCommand request, CancellationToken cancellationToken)
         {
-            var movie = await _movieRepository.GetMovieByIdAsync(request.Id);
-            if (movie == null)
-            {
-                return false;
-            }
-
-            return await _movieRepository.DeleteMovieAsync(request.Id);
+            return await _movieRepository.DeleteMovieAsync(request.Id!);
         }
     }
 } 

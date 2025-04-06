@@ -30,11 +30,11 @@ namespace MovieTicketingSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTheaterById(string id)
         {
-            var query = new GetTheaterByIdQuery { Id = id };
+            var query = new GetTheaterByIdQuery(id);
             var result = await _mediator.Send(query);
             
             if (result == null)
-                return NotFound();
+                return NotFound(new {Message = "Theatr Not Successfully." });
                 
             return Ok(result);
         }
@@ -47,6 +47,35 @@ namespace MovieTicketingSystem.Controllers
                 return Ok(new { Message = "Theater Created Successfully." });
 
             return BadRequest(new { Message = "Theater Creation Failed." });
+        }
+
+        [HttpPost("bulk-create")]
+        public async Task<ActionResult> CreateCinemaHallInBulk([FromBody] IEnumerable<CreateCinemaHallCommand> commands)
+        {
+            if (commands == null || !commands.Any())
+            {
+                return BadRequest(new { Message = "No cinema halls provided for bulk creation." });
+            }
+
+            var results = new List<bool>();
+            foreach (var command in commands)
+            {
+                var result = await _mediator.Send(command);
+                results.Add(result);
+            }
+
+            if (results.All(r => r))
+            {
+                return Ok(new { Message = "All cinema halls created successfully." });
+            }
+            else if (results.Any(r => r))
+            {
+                return Ok(new { Message = "Some cinema halls were created successfully, while others failed." });
+            }
+            else
+            {
+                return BadRequest(new { Message = "Failed to create any cinema halls." });
+            }
         }
 
         [HttpPut("{id}")]
@@ -64,7 +93,7 @@ namespace MovieTicketingSystem.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTheater(string id)
         {
-            var command = new DeleteTheaterCommand { Id = id };
+            var command = new DeleteTheaterCommand(id);
             var result = await _mediator.Send(command);
 
             if (!result)
@@ -114,9 +143,9 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpDelete("{id}/cinema-hall/{cinemaHallId}")]
-        public async Task<IActionResult> DeleteCinemaHall(string cinemaHallId)
+        public async Task<IActionResult> DeleteCinemaHall(string id,string cinemaHallId)
         {
-            var command = new DeleteTheaterCommand { Id = cinemaHallId };
+            var command = new DeleteCinemaHallCommand(cinemaHallId);
             var result = await _mediator.Send(command);
 
             if (!result)

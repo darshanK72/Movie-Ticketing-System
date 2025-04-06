@@ -9,5 +9,8 @@ namespace MovieTicketingSystem.Application.Queries.Theaters
     public class GetTheaterByIdQuery : IRequest<TheaterDTO>
     {
         public string? Id { get; set; }
+        public GetTheaterByIdQuery(string id){
+            Id = id;
+        }
     }
 } 

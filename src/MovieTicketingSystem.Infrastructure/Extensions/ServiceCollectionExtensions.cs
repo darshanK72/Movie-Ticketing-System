@@ -10,6 +10,7 @@ using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Infrastructure.Persistence;
 using MovieTicketingSystem.Infrastructure.Repositories;
 using MovieTicketingSystem.Infrastructure.Services;
+using MovieTicketingSystem.Application.Repositories;
 
 namespace MovieTicketingSystem.Infrastructure.Extensions;
 
@@ -51,5 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITheaterRepository, TheaterRepository>();
         services.AddScoped<IMovieRepository, MovieRepository>();
+        services.AddScoped<IShowRepository, ShowRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
     }
 }

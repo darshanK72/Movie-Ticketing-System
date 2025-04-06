@@ -9,9 +9,9 @@ namespace MovieTicketingSystem.Application.Queries.Movies
 {
     public class GetMoviesByRatingQuery : IRequest<IEnumerable<MovieDTO>>
     {
-        public MovieRating Rating { get; set; }
+        public CertificateRating Rating { get; set; }
 
-        public GetMoviesByRatingQuery(MovieRating rating)
+        public GetMoviesByRatingQuery(CertificateRating rating)
         {
             Rating = rating;
         }

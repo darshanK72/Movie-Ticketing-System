@@ -41,8 +41,8 @@ namespace MovieTicketingSystem.Application.Handlers.Theaters
                 return false;
             }
 
-            _mapper.Map(request, existingCinemaHall);
-            return await _theaterRepository.UpdateCinemaHallAsync(existingCinemaHall);
+            var cinemaHall = _mapper.Map<CinemaHall>(request);
+            return await _theaterRepository.UpdateCinemaHallAsync(cinemaHall);
         }
     }
 }

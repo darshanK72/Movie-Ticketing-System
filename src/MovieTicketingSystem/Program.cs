@@ -15,7 +15,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// Ensure database is created
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -24,7 +23,6 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<TicketingDbContext>();
         context.Database.EnsureCreated();
         
-        // Seed the database
         var seeder = services.GetRequiredService<ISeederService>();
         await seeder.Seed();
     }
@@ -42,6 +40,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

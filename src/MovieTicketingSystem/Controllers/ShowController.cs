@@ -1,4 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using MovieTicketingSystem.Application.Commands.Shows;
+using MovieTicketingSystem.Application.Queries.Shows;
+using MovieTicketingSystem.Domain.Contracts.Repository;
+using MovieTicketingSystem.Domain.DTOs;
+using MovieTicketingSystem.Domain.Entities;
+using AutoMapper;
+using MediatR;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -6,74 +16,103 @@ namespace MovieTicketingSystem.Controllers
     [ApiController]
     public class ShowController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetAllShows()
+        private readonly IMediator _mediator;
+
+        public ShowController(IMediator mediator)
         {
-            // Implementation will be added later
-            return Ok();
+            _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllShows()
+        {
+            var result = await _mediator.Send(new GetAllShowsQuery());
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetShowById(int id)
+        public async Task<IActionResult> GetShowById(string id)
         {
-            // Implementation will be added later
-            return Ok();
+            var result = await _mediator.Send(new GetShowByIdQuery(id));
+            
+            if (result == null)
+                return NotFound(new { Message = "Show Not Found" });
+
+            return Ok(result);
         }
 
         [HttpGet("movie/{movieId}")]
-        public IActionResult GetShowsByMovie(int movieId)
+        public async Task<IActionResult> GetShowsByMovie(string movieId)
         {
-            // Implementation will be added later
-            return Ok();
+            var result = await _mediator.Send(new GetShowsByMovieQuery(movieId));
+            return Ok(result);
         }
 
         [HttpGet("theater/{theaterId}")]
-        public IActionResult GetShowsByTheater(int theaterId)
+        public async Task<IActionResult> GetShowsByTheater(string theaterId)
         {
-            // Implementation will be added later
-            return Ok();
-        }
+            var result = await _mediator.Send(new GetShowsByTheaterQuery(theaterId));
+            return Ok(result);
+        }   
 
         [HttpPost]
-        public IActionResult CreateShow()
+        public async Task<IActionResult> CreateShow([FromBody] CreateShowCommand command)
         {
-            // Implementation will be added later
-            return Ok();
+            var result = await _mediator.Send(command);
+            if (!result)
+                return BadRequest(new { Message = "Show Creation Failed" });
+
+            return Ok(new { Message = "Show Created Successfully" });
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateShow(int id)
+        public async Task<IActionResult> UpdateShow(string id, [FromBody] UpdateShowCommand command)
         {
-            // Implementation will be added later
-            return Ok();
+            if (id != command.Id)
+                return BadRequest(new { Message = "Id Mismatch" });
+
+            var result = await _mediator.Send(command);
+            if (!result)
+                return NotFound(new { Message = "Show Not Found" });
+
+            return Ok(new { Message = "Show Updated Successfully" });
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteShow(int id)
+        public async Task<IActionResult> DeleteShow(string id)
         {
-            // Implementation will be added later
-            return Ok();
+            var result = await _mediator.Send(new DeleteShowCommand(id));
+            
+            if (!result)
+                return NotFound(new { Message = "Show Not Found" });
+
+            return Ok(new { Message = "Show Deleted Successfully" });
         }
 
-        [HttpGet("{id}/seats")]
-        public IActionResult GetShowSeats(int id)
-        {
-            // Implementation will be added later
-            return Ok();
-        }
+        // [HttpGet("{id}/seats")]
+        // public async Task<ActionResult<Show>> GetShowSeats(string id)
+        // {
+        //     var query = new GetShowSeatsQuery(id);
+        //     var result = await _mediator.Send(query);
+            
+        //     if (result == null)
+        //         return NotFound();
+
+        //     return Ok(result);
+        // }
 
         [HttpGet("upcoming")]
-        public IActionResult GetUpcomingShows()
+        public async Task<IActionResult> GetUpcomingShows()
         {
-            // Implementation will be added later
-            return Ok();
+            var result = await _mediator.Send(new GetUpcomingShowsQuery());
+            return Ok(result);
         }
 
         [HttpGet("today")]
-        public IActionResult GetTodayShows()
+        public async Task<IActionResult> GetTodayShows()
         {
-            // Implementation will be added later
-            return Ok();
+            var result = await _mediator.Send(new GetTodayShowsQuery());
+            return Ok(result);
         }
     }
 }

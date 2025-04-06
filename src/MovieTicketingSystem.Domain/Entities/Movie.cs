@@ -20,13 +20,9 @@ namespace MovieTicketingSystem.Domain.Entities
         [StringLength(2000)]
         public string? Description { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string? Genre { get; set; }
+        public ICollection<Genre>? Genres { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string? Language { get; set; }
+        public ICollection<Language>? Languages { get; set; }
 
         [Required]
         public int DurationInMinutes { get; set; }
@@ -34,10 +30,6 @@ namespace MovieTicketingSystem.Domain.Entities
         [Required]
         [StringLength(100)]
         public string? Director { get; set; }
-
-        [Required]
-        [StringLength(500)]
-        public string? Cast { get; set; }
 
         [StringLength(500)]
         public string? PosterUrl { get; set; }
@@ -49,12 +41,15 @@ namespace MovieTicketingSystem.Domain.Entities
         public DateTime ReleaseDate { get; set; }
 
         [Required]
-        public MovieRating Rating { get; set; }
+        public CertificateRating CertificateRating { get; set; }
+
+        [Required]
+        public double? ViewerRating {  get; set; }
+
+        public ICollection<Show>? Shows { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
-
-        public ICollection<Show>? Shows { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

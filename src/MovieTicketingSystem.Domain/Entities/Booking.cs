@@ -25,7 +25,7 @@ namespace MovieTicketingSystem.Domain.Entities
         [ForeignKey("ShowId")]
         public Show? Show { get; set; }
 
-        public ICollection<Seat>? Seats { get; set; } = new List<Seat>();
+        public ICollection<ShowSeat>? ShowSeats { get; set; }
 
         [Required]
         public int NumberOfTickets { get; set; }
@@ -43,12 +43,18 @@ namespace MovieTicketingSystem.Domain.Entities
         [Required]
         public DateTime BookingDate { get; set; }
 
+        [Required]
+        public DateTime ExpirationTime { get; set; }
+
         public DateTime? CancellationDate { get; set; }
 
         [StringLength(500)]
         public string? CancellationReason { get; set; }
 
-        public ICollection<Payment>? Payments { get; set; } = new List<Payment>();
+        public ICollection<Payment>? Payments { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

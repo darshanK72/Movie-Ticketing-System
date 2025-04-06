@@ -41,7 +41,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
         {
             return await _context.Theaters
                 .Include(t => t.Address)
-                .Where(t => t.Address.City.ToLower() == city.ToLower())
+                .Where(t => t.Address!.City!.ToLower() == city.ToLower())
                 .ToListAsync();
         }
 
@@ -56,9 +56,9 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             {
                 searchTerm = searchTerm.ToLower();
                 query = query.Where(t => 
-                    t.Name.ToLower().Contains(searchTerm) || 
-                    t.Description.ToLower().Contains(searchTerm) ||
-                    t.Email.ToLower().Contains(searchTerm));
+                    t.Name!.ToLower().Contains(searchTerm) || 
+                    t.Description!.ToLower().Contains(searchTerm) ||
+                    t.Email!.ToLower().Contains(searchTerm));
             }
 
             var totalCount = await query.CountAsync();
@@ -118,10 +118,16 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteTheaterAsync(string id)
         {
-            var theater = await _context.Theaters.FindAsync(id);
+            var theater = await _context.Theaters.Include(t => t.CinemaHalls).FirstOrDefaultAsync(t => t.Id == Guid.Parse(id));
+
             if (theater == null)
                 return false;
 
+            foreach (var hall in theater!.CinemaHalls!)
+            {
+                await DeleteCinemaHallAsync(hall.Id.ToString());
+            }
+         
             _context.Theaters.Remove(theater);
             await _context.SaveChangesAsync();
             return true;
@@ -163,7 +169,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<Address?> GetAddressByIdAsync(string id)
         {
-            return await _context.Addresses.FindAsync(id);
+            return await _context.Addresses.FindAsync(Guid.Parse(id));
         }
 
         public async Task<Address> UpdateAddressAsync(Address address)
@@ -190,7 +196,6 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 .Include(ch => ch.Seats)
                 .FirstOrDefaultAsync(ch => ch.Id.ToString() == id);
         }
-
         public async Task<IEnumerable<CinemaHall>> GetCinemaHallsByTheaterIdAsync(string theaterId)
         {
             return await _context.CinemaHalls
@@ -248,7 +253,15 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteCinemaHallAsync(string id)
         {
-            var cinemaHall = await _context.CinemaHalls.FindAsync(id);
+            var cinemaHall = await _context.CinemaHalls.FindAsync(Guid.Parse(id));
+
+            var cineHallSeats = await _context.Seats.Where(seat => seat.CinemaHallId.ToString() == id).ToListAsync();
+
+            if(cineHallSeats != null)
+            {
+                _context.Seats.RemoveRange(cineHallSeats);
+            }
+
             if (cinemaHall == null)
                 return false;
 
@@ -267,6 +280,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             foreach (var seat in seats)
             {
                 seat.CinemaHallId = cinemaHall.Id;
+                seat.TheaterId = cinemaHall.TheaterId;
                 seat.CreatedAt = DateTime.UtcNow;
                 seat.IsActive = true;
             }

@@ -31,7 +31,7 @@ namespace MovieTicketingSystem.Application.Services
             {
                 for (int col = 1; col <= seatsPerRow; col++)
                 {
-                    seats.Add(CreateSeat(seatCounter++, rowCounter, col, SeatType.Standard, cinemaHall.Id));
+                    seats.Add(CreateSeat(seatCounter++, rowCounter, col, SeatType.Standard, cinemaHall.Id,cinemaHall.TheaterId));
                 }
                 rowCounter++;
             }
@@ -40,7 +40,7 @@ namespace MovieTicketingSystem.Application.Services
             {
                 for (int col = 1; col <= seatsPerRow; col++)
                 {
-                    seats.Add(CreateSeat(seatCounter++, rowCounter, col, SeatType.Recliner, cinemaHall.Id));
+                    seats.Add(CreateSeat(seatCounter++, rowCounter, col, SeatType.Recliner, cinemaHall.Id, cinemaHall.TheaterId));
                 }
                 rowCounter++;
             }
@@ -49,7 +49,7 @@ namespace MovieTicketingSystem.Application.Services
             {
                 for (int col = 1; col <= seatsPerRow; col++)
                 {
-                    seats.Add(CreateSeat(seatCounter++, rowCounter, col, SeatType.Premium, cinemaHall.Id));
+                    seats.Add(CreateSeat(seatCounter++, rowCounter, col, SeatType.Premium, cinemaHall.Id, cinemaHall.TheaterId));
                 }
                 rowCounter++;
             }
@@ -57,7 +57,7 @@ namespace MovieTicketingSystem.Application.Services
             return seats;
         }
 
-        private Seat CreateSeat(int seatNumber, int rowNumber, int columnNumber, SeatType type, Guid cinemaHallId)
+        private Seat CreateSeat(int seatNumber, int rowNumber, int columnNumber, SeatType type, Guid cinemaHallId,Guid theaterId)
         {
             decimal priceMultiplier = type switch
             {
@@ -76,7 +76,8 @@ namespace MovieTicketingSystem.Application.Services
                 PriceMultiplier = priceMultiplier,
                 CinemaHallId = cinemaHallId,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                TheaterId = theaterId
             };
         }
     }

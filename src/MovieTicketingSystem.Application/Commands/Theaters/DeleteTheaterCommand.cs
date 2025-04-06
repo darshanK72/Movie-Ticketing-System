@@ -7,5 +7,9 @@ namespace MovieTicketingSystem.Application.Commands.Theaters
     public class DeleteTheaterCommand : IRequest<bool>
     {
         public string? Id { get; set; }
+
+        public DeleteTheaterCommand(string id){
+            Id = id;
+        }
     }
 } 

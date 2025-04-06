@@ -31,12 +31,14 @@ namespace MovieTicketingSystem.Application.Mappings
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.AddressDetails))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
 
             CreateMap<UpdateTheaterCommand, Address>()
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AddressId))
               .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.AddressDetails))
               .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+              .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
               .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
 
               CreateMap<CreateCinemaHallCommand, CinemaHall>()

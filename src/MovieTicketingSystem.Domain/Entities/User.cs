@@ -21,13 +21,13 @@ namespace MovieTicketingSystem.Domain.Entities
 
         [NotMapped]
         public string? Password { get; set; }
-
-        [Required]
-        public bool IsActive { get; set; }
-
+     
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
         public ICollection<Show> ManagedShows { get; set; } = new List<Show>();
+
+        [Required]
+        public bool IsActive { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

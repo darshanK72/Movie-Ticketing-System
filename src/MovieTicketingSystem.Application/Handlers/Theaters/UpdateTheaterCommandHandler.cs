@@ -36,10 +36,18 @@ namespace MovieTicketingSystem.Application.Handlers.Theaters
                 throw new ValidationException(validationResult.Errors);
             }
 
-            var address = _mapper.Map<Address>(request);
-            var theater = _mapper.Map<Theater>(request);
+            var theater = await _theaterRepository.GetTheaterByIdAsync(request.Id!);
+            if (theater == null)
+                throw new ValidationException($"Theater with ID {request.Id} not found");
 
-            return await _theaterRepository.UpdateTheaterAsync(theater,address);
+            var address = await _theaterRepository.GetAddressByIdAsync(request.AddressId!);
+            if (address == null)
+                throw new ValidationException($"Address with ID {request.AddressId} not found");
+
+            var updatedAddress = _mapper.Map<Address>(request);
+            var updatedTheater = _mapper.Map<Theater>(request);
+
+            return await _theaterRepository.UpdateTheaterAsync(updatedTheater,updatedAddress);
         }
     }
 } 

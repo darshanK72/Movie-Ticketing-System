@@ -14,11 +14,23 @@ namespace MovieTicketingSystem.Domain.Entities
         public Guid Id { get; set; }
 
         [Required]
+        public Guid CinemaHallId { get; set; }
+
+        [ForeignKey("CinemaHallId")]
+        public CinemaHall? CinemaHall { get; set; }
+
+        [Required]
+        public Guid TheaterId { get; set; }
+
+        [ForeignKey("TheaterId")]
+        public Theater? Theater { get; set; }
+
+        [Required]
         [StringLength(10)]
         public string? SeatNumber { get; set; }
 
         [Required]
-        public int? RowNumber { get; set; }
+        public int RowNumber { get; set; }
 
         [Required]
         public int ColumnNumber { get; set; }
@@ -31,18 +43,13 @@ namespace MovieTicketingSystem.Domain.Entities
         public decimal PriceMultiplier { get; set; }
 
         [Required]
-        public Guid CinemaHallId { get; set; }
-
-        [ForeignKey("CinemaHallId")]
-        public CinemaHall? CinemaHall { get; set; }
-
-        public ICollection<Booking>? Bookings { get; set; }
-
-        [Required]
         public bool IsActive { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
         public DateTime? UpdatedAt { get; set; }
+
+        public virtual ICollection<ShowSeat> ShowSeats { get; set; } = new List<ShowSeat>();
     }
 } 

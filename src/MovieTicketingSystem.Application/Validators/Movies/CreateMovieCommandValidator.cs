@@ -14,13 +14,15 @@ namespace MovieTicketingSystem.Application.Validators
             RuleFor(x => x.Description)
                 .MaximumLength(2000);
 
-            RuleFor(x => x.Genre)
+            RuleFor(x => x.GenreIds)
                 .NotEmpty()
-                .MaximumLength(50);
+                .Must(ids => ids != null && ids.Count > 0)
+                .WithMessage("At least one genre must be selected");
 
-            RuleFor(x => x.Language)
+            RuleFor(x => x.LanguageIds)
                 .NotEmpty()
-                .MaximumLength(20);
+                .Must(ids => ids != null && ids.Count > 0)
+                .WithMessage("At least one language must be selected");
 
             RuleFor(x => x.DurationInMinutes)
                 .GreaterThan(0)
@@ -30,10 +32,6 @@ namespace MovieTicketingSystem.Application.Validators
                 .NotEmpty()
                 .MaximumLength(100);
 
-            RuleFor(x => x.Cast)
-                .NotEmpty()
-                .MaximumLength(500);
-
             RuleFor(x => x.PosterUrl)
                 .MaximumLength(500);
 
@@ -42,6 +40,14 @@ namespace MovieTicketingSystem.Application.Validators
 
             RuleFor(x => x.ReleaseDate)
                 .NotEmpty();
+
+            RuleFor(x => x.CertificateRating)
+                .IsInEnum();
+
+            RuleFor(x => x.ViewerRating)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(10)
+                .When(x => x.ViewerRating.HasValue);
         }
     }
 } 

@@ -2,8 +2,8 @@ namespace MovieTicketingSystem.Domain.Enums
 {
     public enum ShowStatus
     {
-        Upcoming,
-        Ongoing,
+        Scheduled,
+        InProgress,
         Completed,
         Cancelled
     }

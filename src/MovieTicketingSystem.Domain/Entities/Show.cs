@@ -20,13 +20,6 @@ namespace MovieTicketingSystem.Domain.Entities
         public Movie? Movie { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string? Title { get; set; }
-
-        [StringLength(1000)]
-        public string? Description { get; set; }
-
-        [Required]
         public DateTime Date { get; set; }
 
         [Required]
@@ -61,6 +54,11 @@ namespace MovieTicketingSystem.Domain.Entities
         public User? ShowManager { get; set; }
 
         public ICollection<Booking>? Bookings { get; set; }
+
+        public ICollection<ShowSeat>? ShowSeats { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

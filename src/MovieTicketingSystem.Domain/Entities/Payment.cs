@@ -36,13 +36,16 @@ namespace MovieTicketingSystem.Domain.Entities
         [Required]
         public DateTime PaymentDate { get; set; }
 
-        public DateTime? RefundDate { get; set; }
+        public DateTime RefundDate { get; set; }
 
         [StringLength(500)]
         public string? RefundReason { get; set; }
 
         [StringLength(500)]
         public string? FailureReason { get; set; }
+
+        [Required]
+        public bool? IsActive { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

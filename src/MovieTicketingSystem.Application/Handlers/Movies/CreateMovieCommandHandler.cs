@@ -1,9 +1,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MovieTicketingSystem.Application.Commands.Movies;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using MovieTicketingSystem.Domain.Entities;
@@ -39,7 +41,7 @@ namespace MovieTicketingSystem.Application.Handlers.Movies
             movie.CreatedAt = DateTime.UtcNow;
             movie.IsActive = true;
 
-            return await _movieRepository.CreateMovieAsync(movie);
+            return await _movieRepository.CreateMovieAsync(movie,request.GenreIds!,request.LanguageIds!);
         }
     }
 } 

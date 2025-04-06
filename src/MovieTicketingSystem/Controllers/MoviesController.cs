@@ -97,10 +97,10 @@ namespace MovieTicketingSystem.Controllers
             return Ok(result);
         }
 
-        [HttpGet("rating/{rating}")]
-        public async Task<IActionResult> GetMoviesByRating(MovieRating rating)
+        [HttpGet("rating/{certificateRrating}")]
+        public async Task<IActionResult> GetMoviesByRating(CertificateRating certificateRrating)
         {
-            var query = new GetMoviesByRatingQuery(rating);
+            var query = new GetMoviesByRatingQuery(certificateRrating);
             var result = await _mediator.Send(query);
             return Ok(result);
         }
