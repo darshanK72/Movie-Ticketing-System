@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieTicketingSystem.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using MovieTicketingSystem.Infrastructure.Persistence;
 namespace MovieTicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketingDbContext))]
-    partial class TicketingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250406191849_init3")]
+    partial class init3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,9 +246,6 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("BookingStatus")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("CancellationDate")
                         .HasColumnType("datetime2");
 
@@ -270,6 +270,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
 
                     b.Property<Guid>("ShowId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -483,15 +486,15 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("RefundDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RefundReason")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("TransactionId")
                         .IsRequired()

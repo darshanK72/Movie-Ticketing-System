@@ -2,6 +2,7 @@ using AutoMapper;
 using MovieTicketingSystem.Application.Commands.Shows;
 using MovieTicketingSystem.Domain.DTOs;
 using MovieTicketingSystem.Domain.Entities;
+using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Application.Mappings
 {
@@ -25,7 +26,7 @@ namespace MovieTicketingSystem.Application.Mappings
                 .ForMember(dest => dest.TotalSeats, opt => opt.MapFrom(src => src.TotalSeats))
                 .ForMember(dest => dest.AvailableSeats, opt => opt.MapFrom(src => src.AvailableSeats))
                 .ForMember(dest => dest.BasePrice, opt => opt.MapFrom(src => src.BasePrice))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.Bookings, opt => opt.Ignore());
                
             CreateMap<ShowDTO, Show>()
@@ -38,7 +39,7 @@ namespace MovieTicketingSystem.Application.Mappings
                 .ForMember(dest => dest.TotalSeats, opt => opt.MapFrom(src => src.TotalSeats))
                 .ForMember(dest => dest.AvailableSeats, opt => opt.MapFrom(src => src.AvailableSeats))
                 .ForMember(dest => dest.BasePrice, opt => opt.MapFrom(src => src.BasePrice))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ShowStatus>(src.Status!)))
                 .ForMember(dest => dest.ShowManagerId, opt => opt.MapFrom(src => src.ShowManagerId))
                 .ForMember(dest => dest.Movie, opt => opt.Ignore())
                 .ForMember(dest => dest.CinemaHall, opt => opt.Ignore())

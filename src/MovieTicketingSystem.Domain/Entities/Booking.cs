@@ -35,7 +35,7 @@ namespace MovieTicketingSystem.Domain.Entities
         public decimal TotalAmount { get; set; }
 
         [Required]
-        public BookingStatus Status { get; set; }
+        public BookingStatus BookingStatus { get; set; }
 
         [Required]
         public PaymentStatus PaymentStatus { get; set; }

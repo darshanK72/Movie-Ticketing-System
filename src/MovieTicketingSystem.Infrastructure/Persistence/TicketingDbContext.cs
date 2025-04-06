@@ -76,7 +76,7 @@ public class TicketingDbContext : IdentityDbContext<User>
             entity.HasKey(e => e.Id);
             entity.Property(e => e.NumberOfTickets).IsRequired();
             entity.Property(e => e.TotalAmount).IsRequired().HasColumnType("decimal(18,2)");
-            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.BookingStatus).IsRequired();
             entity.Property(e => e.PaymentStatus).IsRequired();
             entity.Property(e => e.BookingDate).IsRequired();
             entity.Property(e => e.ExpirationTime).IsRequired();
@@ -99,7 +99,7 @@ public class TicketingDbContext : IdentityDbContext<User>
             entity.Property(e => e.Amount).IsRequired().HasColumnType("decimal(18,2)");
             entity.Property(e => e.PaymentMethod).IsRequired().HasMaxLength(50);
             entity.Property(e => e.TransactionId).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.PaymentStatus).IsRequired();
             entity.Property(e => e.PaymentDate).IsRequired();
             entity.Property(e => e.RefundReason).HasMaxLength(500);
             entity.Property(e => e.FailureReason).HasMaxLength(500);

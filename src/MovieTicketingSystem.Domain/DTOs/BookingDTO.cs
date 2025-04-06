@@ -13,8 +13,8 @@ namespace MovieTicketingSystem.Domain.DTOs
         public List<ShowSeatDTO>? ShowSeats { get; set; }
         public int NumberOfTickets { get; set; }
         public decimal TotalAmount { get; set; }
-        public BookingStatus Status { get; set; }
-        public PaymentStatus PaymentStatus { get; set; }
+        public string? BookingStatus { get; set; }
+        public string? PaymentStatus { get; set; }
         public DateTime BookingDate { get; set; }
         public DateTime? CancellationDate { get; set; }
         public string? CancellationReason { get; set; }

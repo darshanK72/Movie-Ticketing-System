@@ -5,7 +5,7 @@ namespace MovieTicketingSystem.Application.Commands.Bookings
 {
     public class ProcessPaymentCommand : IRequest<BookingDTO>
     {
-        public Guid BookingId { get; set; }
+        public string? BookingId { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
         public string TransactionId { get; set; } = string.Empty;
     }

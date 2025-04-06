@@ -22,9 +22,7 @@ namespace MovieTicketingSystem.Application.Commands.Bookings
             var booking = await _bookingRepository.CreateInitialBookingAsync(
                     request.UserId!,
                     request.ShowId!,
-                    request.SeatIds,
-                    request.NumberOfTickets,
-                    request.TotalAmount
+                    request.SeatIds
                 );
 
             return booking.Id.ToString();

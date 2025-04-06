@@ -18,14 +18,6 @@ namespace MovieTicketingSystem.Application.Validators.Bookings
             RuleFor(x => x.SeatIds)
                 .NotEmpty()
                 .WithMessage("At least one seat must be selected");
-
-            RuleFor(x => x.NumberOfTickets)
-                .GreaterThan(0)
-                .WithMessage("Number of tickets must be greater than 0");
-
-            RuleFor(x => x.TotalAmount)
-                .GreaterThan(0)
-                .WithMessage("Total amount must be greater than 0");
         }
     }
 } 

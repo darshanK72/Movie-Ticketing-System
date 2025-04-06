@@ -22,37 +22,32 @@ namespace MovieTicketingSystem.Application.Commands.Bookings
         {
             try
             {
-                // Get the booking
-                var booking = await _bookingRepository.GetByIdAsync(request.BookingId);
-                if (booking == null || booking.Status != BookingStatus.Pending)
+                var booking = await _bookingRepository.GetByIdAsync(request.BookingId!);
+                if (booking == null || booking.BookingStatus != BookingStatus.Pending)
                 {
                     return null;
                 }
 
-                // Check if booking has expired (5 minutes)
                 if (booking.ExpirationTime < DateTime.UtcNow)
                 {
-                    await _bookingRepository.CancelBookingAsync(booking.Id, "Booking expired");
+                    await _bookingRepository.CancelBookingAsync(booking.Id.ToString(), "Booking expired");
                     return null;
                 }
 
-                // Process the payment
                 var paymentSuccess = await _bookingRepository.ProcessPaymentAsync(
-                    booking.Id,
+                    booking.Id.ToString(),
                     request.PaymentMethod,
                     request.TransactionId
                 );
 
                 if (!paymentSuccess)
                 {
-                    await _bookingRepository.CancelBookingAsync(booking.Id, "Payment processing failed");
+                    await _bookingRepository.CancelBookingAsync(booking.Id.ToString(), "Payment processing failed");
                     return null;
                 }
 
-                // Get the updated booking with all related data
-                var updatedBooking = await _bookingRepository.GetByIdAsync(booking.Id);
+                var updatedBooking = await _bookingRepository.GetByIdAsync(booking.Id.ToString());
                 
-                // Map to DTO and return
                 return _mapper.Map<BookingDTO>(updatedBooking);
             }
             catch (Exception)

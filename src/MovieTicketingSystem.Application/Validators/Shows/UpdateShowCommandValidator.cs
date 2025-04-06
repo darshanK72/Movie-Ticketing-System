@@ -37,7 +37,9 @@ namespace MovieTicketingSystem.Application.Validators.Shows
                 .GreaterThan(0).WithMessage("Base price must be greater than 0");
 
             RuleFor(x => x.Status)
-                .IsInEnum().WithMessage("Invalid show status");
+                .NotEmpty().WithMessage("Status is required")
+                .Must(status => Enum.TryParse<ShowStatus>(status, out _))
+                .WithMessage("Invalid show status");
         }
     }
 } 

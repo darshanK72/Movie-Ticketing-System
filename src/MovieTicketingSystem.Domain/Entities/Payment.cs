@@ -31,7 +31,7 @@ namespace MovieTicketingSystem.Domain.Entities
         public string? TransactionId { get; set; }
 
         [Required]
-        public PaymentStatus Status { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
 
         [Required]
         public DateTime PaymentDate { get; set; }

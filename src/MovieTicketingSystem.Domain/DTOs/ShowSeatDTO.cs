@@ -15,10 +15,7 @@ namespace MovieTicketingSystem.Domain.DTOs
         public decimal PriceMultiplier { get; set; }
         public bool IsBooked { get; set; }
         public string? BookingId { get; set; }
-        public SeatBookingStatus BookingStatus { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public string? BookingStatus { get; set; }
     }
 }
 

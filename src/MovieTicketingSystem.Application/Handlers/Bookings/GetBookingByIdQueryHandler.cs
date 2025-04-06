@@ -1,11 +1,12 @@
 using AutoMapper;
 using MediatR;
+using MovieTicketingSystem.Application.Queries.Bookings;
 using MovieTicketingSystem.Application.Repositories;
 using MovieTicketingSystem.Domain.DTOs;
 
-namespace MovieTicketingSystem.Application.Queries.Bookings
+namespace MovieTicketingSystem.Application.Handlers.Bookings
 {
-    public class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, BookingDTO?>
+    internal class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, BookingDTO?>
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IMapper _mapper;
@@ -18,13 +19,8 @@ namespace MovieTicketingSystem.Application.Queries.Bookings
 
         public async Task<BookingDTO?> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
         {
-            var bookingId = Guid.Parse(request.BookingId);
-            var booking = await _bookingRepository.GetByIdAsync(bookingId);
-
-            if (booking == null)
-                return null;
-
-            return _mapper.Map<BookingDTO>(booking);
+            var booking = await _bookingRepository.GetByIdAsync(request.BookingId);
+            return booking != null ? _mapper.Map<BookingDTO>(booking) : null;
         }
     }
 } 

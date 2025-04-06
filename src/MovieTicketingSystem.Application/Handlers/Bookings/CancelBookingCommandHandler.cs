@@ -14,15 +14,7 @@ namespace MovieTicketingSystem.Application.Commands.Bookings
 
         public async Task<bool> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var bookingId = Guid.Parse(request.BookingId);
-                return await _bookingRepository.CancelBookingAsync(bookingId, request.CancellationReason);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return await _bookingRepository.CancelBookingAsync(request.BookingId, request.CancellationReason);
         }
     }
 } 

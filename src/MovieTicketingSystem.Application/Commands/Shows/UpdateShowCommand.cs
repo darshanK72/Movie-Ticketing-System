@@ -15,7 +15,7 @@ namespace MovieTicketingSystem.Application.Commands.Shows
         public string? TheaterId {get;set;}
         public string? CinemaHallId { get; set; }
         public decimal BasePrice { get; set; }
-        public ShowStatus Status { get; set; }
+        public string? Status { get; set; }
         public string? ShowManagerId { get; set; }
     }
 } 

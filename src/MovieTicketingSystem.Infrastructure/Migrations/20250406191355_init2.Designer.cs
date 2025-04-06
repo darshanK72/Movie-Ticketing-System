@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieTicketingSystem.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using MovieTicketingSystem.Infrastructure.Persistence;
 namespace MovieTicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketingDbContext))]
-    partial class TicketingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250406191355_init2")]
+    partial class init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,9 +246,6 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("BookingStatus")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("CancellationDate")
                         .HasColumnType("datetime2");
 
@@ -265,11 +265,16 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<int>("NumberOfTickets")
                         .HasColumnType("int");
 
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ShowId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -405,8 +410,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CertificateRating")
-                        .HasColumnType("int");
+                    b.Property<string>("CertificateRating")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -483,15 +489,16 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("RefundDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RefundReason")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransactionId")
                         .IsRequired()
@@ -540,8 +547,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<Guid>("TheaterId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -592,8 +600,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TotalSeats")
                         .HasColumnType("int");
@@ -621,8 +630,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<Guid?>("BookingId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("BookingStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("BookingStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -759,8 +769,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");

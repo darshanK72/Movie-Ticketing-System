@@ -19,53 +19,55 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllBookings()
+        public async Task<IActionResult> GetAllBookings()
         {
-            return Ok();
+            var query = new GetAllBookingsQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookingDTO>> GetBookingById(string id)
+        public async Task<IActionResult> GetBookingById(string id)
         {
-            var query = new GetBookingByIdQuery { BookingId = id };
+            var query = new GetBookingByIdQuery(id);
             var result = await _mediator.Send(query);
 
             if (result == null)
-                return NotFound();
+                return NotFound(new { Message = "Booking Not Found" });
 
             return Ok(result);
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<List<BookingDTO>>> GetUserBookings(string userId)
+        public async Task<IActionResult> GetUserBookings(string userId)
         {
-            var query = new GetUserBookingsQuery { UserId = userId };
+            var query = new GetUserBookingsQuery(userId);
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> CreateBooking([FromBody] CreateBookingCommand command)
+        public async Task<IActionResult> CreateBooking([FromBody] CreateBookingCommand command)
         {
             var bookingId = await _mediator.Send(command);
             if (string.IsNullOrEmpty(bookingId))
-                return BadRequest("Failed to create booking");
+                return BadRequest(new { Message = "Failed to create booking" });
 
             return Ok(new { BookingId = bookingId, Message = "Booking created successfully. Please complete payment within 5 minutes." });
         }
 
         [HttpPost("payment")]
-        public async Task<ActionResult<bool>> MakePayment([FromBody] MakePaymentCommand command)
+        public async Task<IActionResult> MakePayment([FromBody] ProcessPaymentCommand command)
         {
             var result = await _mediator.Send(command);
-            if (!result)
-                return BadRequest("Failed to process payment");
+            if (result == null)
+                return BadRequest(new { Message = "Failed to process payment" });
 
             return Ok(new { Message = "Payment processed successfully. Your booking is confirmed." });
         }
 
         [HttpPost("{id}/cancel")]
-        public async Task<ActionResult<bool>> CancelBooking(string id, [FromBody] string reason)
+        public async Task<IActionResult> CancelBooking(string id, [FromBody] string reason)
         {
             var command = new CancelBookingCommand
             {
@@ -75,16 +77,33 @@ namespace MovieTicketingSystem.Controllers
 
             var result = await _mediator.Send(command);
             if (!result)
-                return BadRequest("Failed to cancel booking");
+                return BadRequest(new { Message = "Failed to cancel booking" });
 
             return Ok(new { Message = "Booking cancelled successfully" });
         }
 
-        [HttpPost("{id}/confirm")]
-        public IActionResult ConfirmBooking(int id)
+        [HttpPost("cancel-expired")]
+        public async Task<IActionResult> CancelExpiredBooking()
         {
-            // Implementation will be added later
-            return Ok();
+            var command = new CancleExpiredBookingsCommand();
+
+            var result = await _mediator.Send(command);
+            if (!result)
+                return BadRequest(new { Message = "Failed to cancel bookings" });
+
+            return Ok(new { Message = "Expired Bookings cancelled successfully" });
+        }
+
+        [HttpPost("{id}/confirm")]
+        public async Task<IActionResult> ConfirmBooking(string id)
+        {
+            var command = new ConfirmBookingCommand { BookingId = id };
+            var result = await _mediator.Send(command);
+            
+            if (!result)
+                return BadRequest(new { Message = "Failed to confirm booking" });
+
+            return Ok(new { Message = "Booking confirmed successfully" });
         }
     }
 }
