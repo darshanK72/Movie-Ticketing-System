@@ -41,10 +41,12 @@ namespace MovieTicketingSystem.Application.Handlers.Movies
                 return false;
             }
 
-            _mapper.Map(request, existingMovie);
-            existingMovie.UpdatedAt = DateTime.UtcNow;
+            var updated = _mapper.Map<Movie>(request);
+            updated.CreatedAt = existingMovie.CreatedAt;
+            updated.IsActive = existingMovie.IsActive;
+            updated.UpdatedAt = DateTime.UtcNow;
 
-            return await _movieRepository.UpdateMovieAsync(existingMovie);
+            return await _movieRepository.UpdateMovieAsync(updated, request.GenreIds!, request.LanguageIds!);
         }
     }
 } 

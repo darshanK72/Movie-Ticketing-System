@@ -9,7 +9,7 @@ namespace MovieTicketingSystem.Domain.DTOs
     {
         public string? Id { get; set; }
         public string? UserId { get; set; }
-        public string? ShowId { get; set; }
+        public string? ShowTimingId { get; set; }
         public List<ShowSeatDTO>? ShowSeats { get; set; }
         public int NumberOfTickets { get; set; }
         public decimal TotalAmount { get; set; }

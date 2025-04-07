@@ -13,10 +13,10 @@ namespace MovieTicketingSystem.Domain.Entities
         public Guid Id { get; set; }
 
         [Required]
-        public Guid ShowId { get; set; }
+        public Guid ShowTimingId { get; set; }
 
-        [ForeignKey("ShowId")]
-        public Show? Show { get; set; }
+        [ForeignKey("ShowTimingId")]
+        public ShowTiming? ShowTiming { get; set; }
 
         [Required]
         public Guid SeatId { get; set; }
@@ -33,7 +33,7 @@ namespace MovieTicketingSystem.Domain.Entities
         public Booking? Booking { get; set; }
 
         [Required]
-        public SeatBookingStatus BookingStatus { get; set; }
+        public SeatBookingStatus SeatBookingStatus { get; set; }
 
         [Required]
         public bool IsActive { get; set; }

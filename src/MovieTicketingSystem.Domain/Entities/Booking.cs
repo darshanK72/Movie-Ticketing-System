@@ -20,10 +20,10 @@ namespace MovieTicketingSystem.Domain.Entities
         public User? User { get; set; }
 
         [Required]
-        public Guid ShowId { get; set; }
+        public Guid ShowTimingId { get; set; }
 
-        [ForeignKey("ShowId")]
-        public Show? Show { get; set; }
+        [ForeignKey("ShowTimingId")]
+        public ShowTiming? ShowTiming { get; set; }
 
         public ICollection<ShowSeat>? ShowSeats { get; set; }
 

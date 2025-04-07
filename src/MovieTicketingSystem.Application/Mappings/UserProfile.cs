@@ -22,7 +22,7 @@ namespace MovieTicketingSystem.Application.Mappings
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.Bookings, opt => opt.Ignore())
-                .ForMember(dest => dest.ManagedShows, opt => opt.Ignore());
+                .ForMember(dest => dest.ManagedShowTimings, opt => opt.Ignore());
         }
 
         private UserRole MapRole(string role)

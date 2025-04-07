@@ -6,7 +6,7 @@ namespace MovieTicketingSystem.Domain.DTOs
     public class ShowSeatDTO
     {
         public string? Id { get; set; }
-        public string? ShowId { get; set; }
+        public string? ShowTimingId { get; set; }
         public string? SeatId { get; set; }
         public string? SeatNumber { get; set; }
         public int RowNumber { get; set; }
@@ -15,7 +15,7 @@ namespace MovieTicketingSystem.Domain.DTOs
         public decimal PriceMultiplier { get; set; }
         public bool IsBooked { get; set; }
         public string? BookingId { get; set; }
-        public string? BookingStatus { get; set; }
+        public string? SeatBookingStatus { get; set; }
     }
 }
 

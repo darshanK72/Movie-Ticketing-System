@@ -30,8 +30,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
-                .Include(s => s.ShowSeats)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
                 .FirstOrDefaultAsync(s => s.Id == guidId);
         }
 
@@ -40,7 +43,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
                 .ToListAsync();
         }
 
@@ -52,7 +59,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall)
-                .Include(s => s.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
                 .Where(s => s.MovieId == guidMovieId)
                 .ToListAsync();
         }
@@ -65,7 +76,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
                 .Where(s => s.CinemaHall!.TheaterId == guidTheaterId)
                 .ToListAsync();
         }
@@ -75,7 +90,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             var query = _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -99,33 +118,8 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
         {
             await _context.Shows.AddAsync(show);
             await _context.SaveChangesAsync();
-
-            var seats = await _context.Seats
-                .Where(s => s.CinemaHallId == show.CinemaHallId && s.IsActive)
-                .ToListAsync();
-
-            if (seats == null) return false;
-
-            var showSeats = seats.Select(seat => new ShowSeat
-            {
-                ShowId = show.Id,
-                SeatId = seat.Id,
-                IsBooked = false,
-                BookingStatus = SeatBookingStatus.Available,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            }).ToList();
-
-            await _context.ShowSeats.AddRangeAsync(showSeats);
-            await _context.SaveChangesAsync();
-
-            show.TotalSeats = seats.Count;
-            show.AvailableSeats = seats.Count;
-            await _context.SaveChangesAsync();
-
-            return true ;
+            return true;
         }
-
 
         public async Task<bool> UpdateShowAsync(Show show)
         {
@@ -144,7 +138,8 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
 
         public async Task<bool> DeleteShowAsync(string id)
         {
-            try{
+            try
+            {
                 if (!Guid.TryParse(id, out Guid guidId))
                     return false;
 
@@ -155,14 +150,17 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 _context.Remove(show);
                 await _context.SaveChangesAsync();
                 return true;
-            }catch(Exception){
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
 
         public async Task<bool> ActivateShowAsync(string id)
         {
-            try{
+            try
+            {
                 if (!Guid.TryParse(id, out Guid guidId))
                     return false;
 
@@ -174,7 +172,9 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 show.UpdatedAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
                 return true;
-            }catch(Exception){
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
@@ -202,8 +202,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
-                .Include(s => s.ShowSeats)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
                 .FirstOrDefaultAsync(s => s.Id == guidShowId);
         }
 
@@ -213,10 +216,14 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
-                .Where(s => s.Date >= currentDate && s.IsActive)
-                .OrderBy(s => s.Date)
-                .ThenBy(s => s.StartTime)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
+                .Where(s => s.ShowTimings!.Any(st => st.Date >= currentDate && st.IsActive))
+                .OrderBy(s => s.ShowTimings!.Min(st => st.Date))
+                .ThenBy(s => s.ShowTimings!.Min(st => st.StartTime))
                 .ToListAsync();
         }
 
@@ -226,88 +233,34 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return await _context.Shows
                 .Include(s => s.Movie)
                 .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowManager)
-                .Where(s => s.Date.Date == today && s.IsActive)
-                .OrderBy(s => s.StartTime)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowManager)
+                .Include(s => s.ShowTimings)
+                    .ThenInclude(st => st.ShowSeats)
+                        .ThenInclude(ss => ss.Seat)
+                .Where(s => s.ShowTimings!.Any(st => st.Date.Date == today && st.IsActive))
+                .OrderBy(s => s.ShowTimings!.Min(st => st.StartTime))
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Show>> GetShowsByMovieIdAsync(Guid movieId)
+        public async Task<IEnumerable<ShowTiming>> GetShowTimingsByShowIdAsync(Guid showId)
         {
-            return await _context.Shows
-                .Include(s => s.Movie)
-                .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Where(s => s.MovieId == movieId && s.IsActive)
+            return await _context.ShowTimings
+                .Include(st => st.ShowManager)
+                .Where(st => st.ShowId == showId && st.IsActive)
+                .OrderBy(st => st.Date)
+                .ThenBy(st => st.StartTime)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Show>> GetShowsByCinemaHallIdAsync(Guid cinemaHallId)
-        {
-            return await _context.Shows
-                .Include(s => s.Movie)
-                .Include(s => s.CinemaHall)
-                .Where(s => s.CinemaHallId == cinemaHallId && s.IsActive)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<ShowSeat>> GetShowSeatsAsync(Guid showId)
+        public async Task<IEnumerable<ShowSeat>> GetShowSeatsByShowTimingIdAsync(Guid showTimingId)
         {
             return await _context.ShowSeats
                 .Include(ss => ss.Seat)
-                .Where(ss => ss.ShowId == showId && ss.IsActive)
-                .OrderBy(ss => ss.Seat!.RowNumber)
-                .ThenBy(ss => ss.Seat!.ColumnNumber)
-                .ToListAsync();
-        }
-
-        public async Task<ShowSeat> UpdateShowSeatStatusAsync(Guid showId, int seatNumber, SeatBookingStatus status)
-        {
-            var showSeat = await _context.ShowSeats
-                .Include(ss => ss.Seat)
-                .FirstOrDefaultAsync(ss => ss.ShowId == showId && ss.Seat!.SeatNumber == seatNumber.ToString());
-
-            if (showSeat == null)
-                throw new KeyNotFoundException($"Seat {seatNumber} not found for show {showId}");
-
-            showSeat.BookingStatus = status;
-            showSeat.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
-            return showSeat;
-        }
-
-        public async Task<Show?> GetByIdAsync(Guid id)
-        {
-            return await _context.Shows
-                .Include(s => s.Movie)
-                .Include(s => s.CinemaHall)
-                .Include(s => s.ShowManager)
-                .Include(s => s.ShowSeats)
-                    .ThenInclude(ss => ss.Seat)
-                .FirstOrDefaultAsync(s => s.Id == id);
-        }
-
-        public async Task<List<Show>> GetShowsByMovieAsync(Guid movieId)
-        {
-            return await _context.Shows
-                .Include(s => s.Movie)
-                .Include(s => s.CinemaHall)
-                .Include(s => s.ShowSeats)
-                .Where(s => s.MovieId == movieId && s.IsActive)
-                .OrderBy(s => s.Date)
-                .ThenBy(s => s.StartTime)
-                .ToListAsync();
-        }
-
-        public async Task<List<Show>> GetShowsByTheaterAsync(Guid theaterId)
-        {
-            return await _context.Shows
-                .Include(s => s.Movie)
-                .Include(s => s.CinemaHall)
-                .Include(s => s.ShowSeats)
-                .Where(s => s.CinemaHall.TheaterId == theaterId && s.IsActive)
-                .OrderBy(s => s.Date)
-                .ThenBy(s => s.StartTime)
+                .Where(ss => ss.ShowTimingId == showTimingId && ss.IsActive)
+                .OrderBy(ss => ss.Seat.RowNumber)
+                .ThenBy(ss => ss.Seat.ColumnNumber)
                 .ToListAsync();
         }
     }
-} 
+}

@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MovieTicketingSystem.Application.Queries.Theaters;
+using MovieTicketingSystem.Application.Queries.Search;
+using MovieTicketingSystem.Domain.DTOs;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -16,17 +17,11 @@ namespace MovieTicketingSystem.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("paged")]
-        public async Task<IActionResult> GetTheatersPaged([FromQuery] GetTheatersPagedQuery query)
+        [HttpGet]
+        [ProducesResponseType(typeof(SearchResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Search([FromQuery] SearchQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
-        }
-
-        [HttpGet("city/{city}")]
-        public async Task<IActionResult> GetTheatersByCity(string city)
-        {
-            var query = new GetTheatersByCityQuery(city);
             var result = await _mediator.Send(query);
             return Ok(result);
         }

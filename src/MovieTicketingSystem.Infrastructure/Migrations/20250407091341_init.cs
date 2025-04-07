@@ -375,15 +375,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MovieId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     CinemaHallId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TotalSeats = table.Column<int>(type: "int", nullable: false),
-                    AvailableSeats = table.Column<int>(type: "int", nullable: false),
-                    BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    ShowManagerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -391,11 +383,6 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Shows", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Shows_AspNetUsers_ShowManagerId",
-                        column: x => x.ShowManagerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Shows_CinemaHalls_CinemaHallId",
                         column: x => x.CinemaHallId,
@@ -409,15 +396,48 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShowTimings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShowId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    TotalSeats = table.Column<int>(type: "int", nullable: false),
+                    AvailableSeats = table.Column<int>(type: "int", nullable: false),
+                    BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ShowStatus = table.Column<int>(type: "int", nullable: false),
+                    ShowManagerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShowTimings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShowTimings_AspNetUsers_ShowManagerId",
+                        column: x => x.ShowManagerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ShowTimings_Shows_ShowId",
+                        column: x => x.ShowId,
+                        principalTable: "Shows",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bookings",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ShowId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShowTimingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NumberOfTickets = table.Column<int>(type: "int", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    BookingStatus = table.Column<int>(type: "int", nullable: false),
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpirationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -436,9 +456,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Bookings_Shows_ShowId",
-                        column: x => x.ShowId,
-                        principalTable: "Shows",
+                        name: "FK_Bookings_ShowTimings_ShowTimingId",
+                        column: x => x.ShowTimingId,
+                        principalTable: "ShowTimings",
                         principalColumn: "Id");
                 });
 
@@ -451,7 +471,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     TransactionId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RefundDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RefundReason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
@@ -475,7 +495,7 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ShowId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShowTimingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SeatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsBooked = table.Column<bool>(type: "bit", nullable: false),
                     BookingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -498,9 +518,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                         principalTable: "Seats",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ShowSeats_Shows_ShowId",
-                        column: x => x.ShowId,
-                        principalTable: "Shows",
+                        name: "FK_ShowSeats_ShowTimings_ShowTimingId",
+                        column: x => x.ShowTimingId,
+                        principalTable: "ShowTimings",
                         principalColumn: "Id");
                 });
 
@@ -544,9 +564,9 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ShowId",
+                name: "IX_Bookings_ShowTimingId",
                 table: "Bookings",
-                column: "ShowId");
+                column: "ShowTimingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_UserId",
@@ -594,11 +614,6 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 column: "MovieId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Shows_ShowManagerId",
-                table: "Shows",
-                column: "ShowManagerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ShowSeats_BookingId",
                 table: "ShowSeats",
                 column: "BookingId");
@@ -609,9 +624,19 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 column: "SeatId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShowSeats_ShowId",
+                name: "IX_ShowSeats_ShowTimingId",
                 table: "ShowSeats",
+                column: "ShowTimingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShowTimings_ShowId",
+                table: "ShowTimings",
                 column: "ShowId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShowTimings_ShowManagerId",
+                table: "ShowTimings",
+                column: "ShowManagerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Theaters_AddressId",
@@ -665,10 +690,13 @@ namespace MovieTicketingSystem.Infrastructure.Migrations
                 name: "Seats");
 
             migrationBuilder.DropTable(
-                name: "Shows");
+                name: "ShowTimings");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Shows");
 
             migrationBuilder.DropTable(
                 name: "CinemaHalls");

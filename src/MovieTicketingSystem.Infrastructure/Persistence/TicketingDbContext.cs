@@ -14,6 +14,7 @@ public class TicketingDbContext : IdentityDbContext<User>
 
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Show> Shows { get; set; }
+    public DbSet<ShowTiming> ShowTimings { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Theater> Theaters { get; set; }
@@ -46,13 +47,9 @@ public class TicketingDbContext : IdentityDbContext<User>
         modelBuilder.Entity<Show>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Date).IsRequired();
-            entity.Property(e => e.StartTime).IsRequired();
-            entity.Property(e => e.EndTime).IsRequired();
-            entity.Property(e => e.TotalSeats).IsRequired();
-            entity.Property(e => e.AvailableSeats).IsRequired();
-            entity.Property(e => e.BasePrice).IsRequired().HasColumnType("decimal(18,2)");
-            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.MovieId).IsRequired();
+            entity.Property(e => e.CinemaHallId).IsRequired();
+            entity.Property(e => e.IsActive).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
 
             entity.HasOne(e => e.Movie)
@@ -64,9 +61,29 @@ public class TicketingDbContext : IdentityDbContext<User>
                 .WithMany(ch => ch.Shows)
                 .HasForeignKey(e => e.CinemaHallId)
                 .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<ShowTiming>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ShowId).IsRequired();
+            entity.Property(e => e.Date).IsRequired();
+            entity.Property(e => e.StartTime).IsRequired();
+            entity.Property(e => e.EndTime).IsRequired();
+            entity.Property(e => e.BasePrice).IsRequired().HasColumnType("decimal(18,2)");
+            entity.Property(e => e.ShowStatus).IsRequired();
+            entity.Property(e => e.TotalSeats).IsRequired();
+            entity.Property(e => e.AvailableSeats).IsRequired();
+            entity.Property(e => e.IsActive).IsRequired();
+            entity.Property(e => e.CreatedAt).IsRequired();
+
+            entity.HasOne(e => e.Show)
+                .WithMany(s => s.ShowTimings)
+                .HasForeignKey(e => e.ShowId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(e => e.ShowManager)
-                .WithMany(u => u.ManagedShows)
+                .WithMany(u => u.ManagedShowTimings)
                 .HasForeignKey(e => e.ShowManagerId)
                 .OnDelete(DeleteBehavior.NoAction);
         });
@@ -87,9 +104,9 @@ public class TicketingDbContext : IdentityDbContext<User>
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(e => e.Show)
-                .WithMany(s => s.Bookings)
-                .HasForeignKey(e => e.ShowId)
+            entity.HasOne(e => e.ShowTiming)
+                .WithMany(st => st.Bookings)
+                .HasForeignKey(e => e.ShowTimingId)
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
@@ -170,14 +187,16 @@ public class TicketingDbContext : IdentityDbContext<User>
         modelBuilder.Entity<ShowSeat>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.ShowTimingId).IsRequired();
+            entity.Property(e => e.SeatId).IsRequired();
             entity.Property(e => e.IsBooked).IsRequired();
-            entity.Property(e => e.BookingStatus).IsRequired();
+            entity.Property(e => e.SeatBookingStatus).IsRequired();
             entity.Property(e => e.IsActive).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
 
-            entity.HasOne(e => e.Show)
-                .WithMany(s => s.ShowSeats)
-                .HasForeignKey(e => e.ShowId)
+            entity.HasOne(e => e.ShowTiming)
+                .WithMany(st => st.ShowSeats)
+                .HasForeignKey(e => e.ShowTimingId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(e => e.Seat)

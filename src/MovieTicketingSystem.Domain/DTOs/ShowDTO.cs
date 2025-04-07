@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Domain.DTOs
@@ -12,15 +13,9 @@ namespace MovieTicketingSystem.Domain.DTOs
         public string? CinemaHallName { get; set; }
         public string? TheaterId { get; set; }
         public string? TheaterName { get; set; }
-        public string? ShowManagerId { get; set; }
-        public string? ShowManagerName { get; set; }
-        public DateTime Date { get; set; }
-        public TimeSpan? StartTime { get; set; }
-        public TimeSpan? EndTime { get; set; }
-        public int TotalSeats { get; set; }
-        public int AvailableSeats { get; set; }
-        public decimal BasePrice { get; set; }
-        public string? Status { get; set; }
-        public ICollection<BookingDTO>? Bookings {get;set;}
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public ICollection<ShowTimingDTO>? ShowTimings { get; set; }
     }
 } 

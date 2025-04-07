@@ -114,5 +114,25 @@ namespace MovieTicketingSystem.Controllers
             var result = await _mediator.Send(new GetTodayShowsQuery());
             return Ok(result);
         }
+
+        [HttpGet("{showId}/timings")]
+        public async Task<IActionResult> GetShowTimings(string showId)
+        {
+            if (!Guid.TryParse(showId, out Guid guid))
+                return BadRequest(new { Message = "Invalid Show ID format" });
+
+            var result = await _mediator.Send(new GetShowTimingsByShowIdQuery(guid));
+            return Ok(result);
+        }
+
+        [HttpGet("timings/{showTimingId}/seats")]
+        public async Task<IActionResult> GetShowSeats(string showTimingId)
+        {
+            if (!Guid.TryParse(showTimingId, out Guid guid))
+                return BadRequest(new { Message = "Invalid Show Timing ID format" });
+
+            var result = await _mediator.Send(new GetShowSeatsByShowTimingIdQuery(guid));
+            return Ok(result);
+        }
     }
 }

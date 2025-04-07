@@ -44,43 +44,48 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Booking> CreateInitialBookingAsync(string userId, string showId, List<string> seatIds)
+        public async Task<Booking> CreateInitialBookingAsync(string userId, string showTimingId, List<string> seatIds)
         {
-            var show = await _context.Shows
-                .FirstOrDefaultAsync(s => s.Id.ToString() == showId);
+            var showTiming = await _context.ShowTimings
+                .FirstOrDefaultAsync(st => st.Id.ToString() == showTimingId);
 
-            if (show == null)
+            if (showTiming == null)
             {
-                throw new InvalidOperationException("Show not found");
+                throw new InvalidOperationException("Show timing not found");
             }
+
+            var showSeatsa = await _context.ShowSeats
+                .Include(ss => ss.Seat)
+                .Where(ss => ss.ShowTimingId.ToString() == showTimingId)
+                .ToListAsync();
 
             var showSeats = await _context.ShowSeats
                 .Include(ss => ss.Seat)
-                .Where(ss => ss.ShowId.ToString() == showId && 
-                           seatIds.Contains(ss.SeatId.ToString()))
+                .Where(ss => ss.ShowTimingId.ToString() == showTimingId && 
+                           seatIds.Contains(ss.Id.ToString()))
                 .ToListAsync();
 
             if (showSeats.Count != seatIds.Count)
             {
-                throw new InvalidOperationException("One or more seats not found for this show");
+                throw new InvalidOperationException("One or more seats not found for this show timing");
             }
 
             var unavailableSeats = showSeats
-                .Where(ss => ss.IsBooked || ss.BookingStatus == SeatBookingStatus.InProgress)
+                .Where(ss => ss.IsBooked || ss.SeatBookingStatus == SeatBookingStatus.InProgress)
                 .ToList();
 
             if (unavailableSeats.Any())
             {
-                throw new InvalidOperationException("One or more seats are already booked or in progress for this show");
+                throw new InvalidOperationException("One or more seats are already booked or in progress for this show timing");
             }
 
             int numberOfTickets = showSeats.Count();
-            decimal calculatedTotalAmount = showSeats.Sum(ss => show.BasePrice * ss.Seat!.PriceMultiplier);
+            decimal calculatedTotalAmount = showSeats.Sum(ss => showTiming.BasePrice * ss.Seat!.PriceMultiplier);
 
             var booking = new Booking
             {
                 UserId = userId,
-                ShowId = Guid.Parse(showId),
+                ShowTimingId = Guid.Parse(showTimingId),
                 NumberOfTickets = numberOfTickets,
                 TotalAmount = calculatedTotalAmount,
                 BookingStatus = BookingStatus.Pending,
@@ -98,7 +103,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             {
                 showSeat.BookingId = booking.Id;
                 showSeat.IsBooked = true;
-                showSeat.BookingStatus = SeatBookingStatus.InProgress;
+                showSeat.SeatBookingStatus = SeatBookingStatus.InProgress;
                 showSeat.UpdatedAt = DateTime.UtcNow;
             }
 
@@ -107,12 +112,16 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return booking;
         }
 
+        public async Task<IEnumerable<ShowSeat>> GetShowSeatsByBookingId(string bookingId)
+        {
+            return await _context.ShowSeats.Where(ss => ss.BookingId.ToString() == bookingId).ToListAsync();
+        }
         public async Task<bool> ProcessPaymentAsync(string bookingId, string paymentMethod, string transactionId)
         {
             try
             {
                 var booking = await GetByIdAsync(bookingId);
-                if (booking == null || booking.BookingStatus != BookingStatus.Pending)
+                if (booking == null)
                     return false;
 
                 var payment = new Payment
@@ -128,14 +137,16 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 };
 
                 await _context.Payments.AddAsync(payment);
+                await _context.SaveChangesAsync();
 
-                booking.BookingStatus = BookingStatus.Confirmed;
                 booking.PaymentStatus = PaymentStatus.Completed;
+                booking.BookingStatus = BookingStatus.Confirmed;
                 booking.UpdatedAt = DateTime.UtcNow;
 
                 foreach (var showSeat in booking.ShowSeats!)
                 {
-                    showSeat.BookingStatus = SeatBookingStatus.Booked;
+                    showSeat.SeatBookingStatus = SeatBookingStatus.Booked;
+                    showSeat.UpdatedAt = DateTime.UtcNow;
                 }
 
                 await _context.SaveChangesAsync();
@@ -153,7 +164,8 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             {
                 var expiredBookings = await _context.Bookings
                     .Include(b => b.ShowSeats)
-                    .Where(b => b.BookingStatus == BookingStatus.Pending && b.ExpirationTime < DateTime.UtcNow)
+                    .Where(b => b.BookingStatus == BookingStatus.Pending && 
+                               b.ExpirationTime < DateTime.UtcNow)
                     .ToListAsync();
 
                 foreach (var booking in expiredBookings)
@@ -167,7 +179,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                     {
                         showSeat.IsBooked = false;
                         showSeat.BookingId = null;
-                        showSeat.BookingStatus = SeatBookingStatus.Available;
+                        showSeat.SeatBookingStatus = SeatBookingStatus.Available;
                     }
 
                     booking.ShowSeats = null;
@@ -208,11 +220,11 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 {
                     showSeat.IsBooked = false;
                     showSeat.BookingId = null;
-                    showSeat.BookingStatus = SeatBookingStatus.Available;
+                    showSeat.SeatBookingStatus = SeatBookingStatus.Available;
+                    showSeat.UpdatedAt = DateTime.UtcNow;
                 }
 
                 booking.ShowSeats = null;
-
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -226,6 +238,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
         {
             try
             {
+                booking.UpdatedAt = DateTime.UtcNow;
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
                 return true;
@@ -240,6 +253,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
         {
             try
             {
+                payment.UpdatedAt = DateTime.UtcNow;
                 _context.Payments.Update(payment);
                 await _context.SaveChangesAsync();
                 return true;
@@ -254,6 +268,10 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
         {
             try
             {
+                foreach (var showSeat in showSeats)
+                {
+                    showSeat.UpdatedAt = DateTime.UtcNow;
+                }
                 _context.ShowSeats.UpdateRange(showSeats);
                 await _context.SaveChangesAsync();
                 return true;

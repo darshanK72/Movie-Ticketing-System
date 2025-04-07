@@ -1,0 +1,97 @@
+[
+  {
+    "title": "The Quantum Paradox",
+    "description": "A brilliant scientist discovers a way to manipulate time, but her experiments lead to unexpected consequences that threaten the fabric of reality itself.",
+    "genreIds": [
+      "99E7621B-0BB2-4E48-BC10-2DEEAC1F1738",
+      "00DE17BC-D95F-451F-B6C9-1287501E5947"
+    ],
+    "languageIds": [
+      "30711220-6057-4EC3-BA50-8D7BBDB983E3",
+      "CFED8CF8-1D18-49B9-9F89-48A3EF7A2A18"
+    ],
+    "durationInMinutes": 148,
+    "director": "Christopher Nolan",
+    "posterUrl": "https://example.com/posters/quantum-paradox.jpg",
+    "trailerUrl": "https://example.com/trailers/quantum-paradox.mp4",
+    "releaseDate": "2024-06-15T00:00:00",
+    "certificateRating": 2,
+    "viewerRating": 4.5
+  },
+  {
+    "title": "Mumbai Nights",
+    "description": "A heartwarming tale of love and ambition set against the vibrant backdrop of Mumbai's nightlife, where dreams and reality collide.",
+    "genreIds": [
+      "781CBB11-1EC6-4EE6-A5A8-E1C4883BF066",
+      "CFF95485-89D2-4A70-A6E8-94904D8C02A6"
+    ],
+    "languageIds": [
+      "CFED8CF8-1D18-49B9-9F89-48A3EF7A2A18",
+      "DD9D7EC3-FF4E-45BC-AB52-C98C2142C724"
+    ],
+    "durationInMinutes": 165,
+    "director": "Rajkumar Hirani",
+    "posterUrl": "https://example.com/posters/mumbai-nights.jpg",
+    "trailerUrl": "https://example.com/trailers/mumbai-nights.mp4",
+    "releaseDate": "2024-07-20T00:00:00",
+    "certificateRating": 1,
+    "viewerRating": 4.2
+  },
+  {
+    "title": "The Last Laugh",
+    "description": "A struggling stand-up comedian finds himself in a series of increasingly absurd situations that test his resolve and sense of humor.",
+    "genreIds": [
+      "4BA9C144-7029-4EBB-916A-ABC8B1CC595E",
+      "CFF95485-89D2-4A70-A6E8-94904D8C02A6"
+    ],
+    "languageIds": [
+      "30711220-6057-4EC3-BA50-8D7BBDB983E3"
+    ],
+    "durationInMinutes": 112,
+    "director": "Martin Scorsese",
+    "posterUrl": "https://example.com/posters/last-laugh.jpg",
+    "trailerUrl": "https://example.com/trailers/last-laugh.mp4",
+    "releaseDate": "2024-08-10T00:00:00",
+    "certificateRating": 2,
+    "viewerRating": 4.0
+  },
+  {
+    "title": "Dark Forest",
+    "description": "A group of friends camping in a remote forest must survive against an ancient evil that awakens when they disturb its resting place.",
+    "genreIds": [
+      "9340ABBC-4D06-4DB8-B84E-982201A0051C",
+      "00DE17BC-D95F-451F-B6C9-1287501E5947"
+    ],
+    "languageIds": [
+      "30711220-6057-4EC3-BA50-8D7BBDB983E3",
+      "CFED8CF8-1D18-49B9-9F89-48A3EF7A2A18"
+    ],
+    "durationInMinutes": 95,
+    "director": "James Wan",
+    "posterUrl": "https://example.com/posters/dark-forest.jpg",
+    "trailerUrl": "https://example.com/trailers/dark-forest.mp4",
+    "releaseDate": "2024-09-05T00:00:00",
+    "certificateRating": 3,
+    "viewerRating": 3.8
+  },
+  {
+    "title": "Operation Redemption",
+    "description": "A former special forces operative must lead a team of unlikely allies to prevent a global catastrophe while confronting his own dark past.",
+    "genreIds": [
+      "46F127D7-91F9-4C50-964B-DF35FFACAE85",
+      "00DE17BC-D95F-451F-B6C9-1287501E5947"
+    ],
+    "languageIds": [
+      "30711220-6057-4EC3-BA50-8D7BBDB983E3",
+      "CFED8CF8-1D18-49B9-9F89-48A3EF7A2A18",
+      "6DEF518D-4C94-4B79-8C4B-A8459B88DA6A"
+    ],
+    "durationInMinutes": 132,
+    "director": "Michael Bay",
+    "posterUrl": "https://example.com/posters/operation-redemption.jpg",
+    "trailerUrl": "https://example.com/trailers/operation-redemption.mp4",
+    "releaseDate": "2024-10-15T00:00:00",
+    "certificateRating": 2,
+    "viewerRating": 4.1
+  }
+] 

@@ -11,6 +11,7 @@ namespace MovieTicketingSystem.Application.Mappings
         {
             CreateMap<Movie, MovieDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.CertificateRating, opt => opt.MapFrom(src => src.CertificateRating.ToString()))
                 .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.Genres!.Select(g => g.Name)))
                 .ForMember(dest => dest.Languages, opt => opt.MapFrom(src => src.Languages!.Select(l => l.Name)));
 

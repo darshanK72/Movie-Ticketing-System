@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,13 +50,46 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateMovieAsync(Movie movie)
+        public async Task<bool> UpdateMovieAsync(Movie movie, IEnumerable<string> genreIds, IEnumerable<string> languageIds)
         {
-            movie.UpdatedAt = DateTime.Now;
-            _context.Movies.Update(movie);
+            var existingMovie = await _context.Movies
+                .Include(m => m.Genres)
+                .Include(m => m.Languages)
+                .FirstOrDefaultAsync(m => m.Id == movie.Id);
+
+            if (existingMovie == null)
+                return false;
+
+            // Update basic properties
+            existingMovie.Title = movie.Title;
+            existingMovie.Description = movie.Description;
+            existingMovie.DurationInMinutes = movie.DurationInMinutes;
+            existingMovie.Director = movie.Director;
+            existingMovie.PosterUrl = movie.PosterUrl;
+            existingMovie.TrailerUrl = movie.TrailerUrl;
+            existingMovie.ReleaseDate = movie.ReleaseDate;
+            existingMovie.CertificateRating = movie.CertificateRating;
+            existingMovie.ViewerRating = movie.ViewerRating;
+            existingMovie.UpdatedAt = DateTime.UtcNow;
+
+            // Update genres
+            if (genreIds != null && genreIds.Any())
+            {
+                var genreGuids = genreIds.Select(id => Guid.Parse(id)).ToList();
+                var genres = await _context.Genres.Where(g => genreGuids.Contains(g.Id)).ToListAsync();
+                existingMovie.Genres = genres;
+            }
+
+            // Update languages
+            if (languageIds != null && languageIds.Any())
+            {
+                var languageGuids = languageIds.Select(id => Guid.Parse(id)).ToList();
+                var languages = await _context.Languages.Where(l => languageGuids.Contains(l.Id)).ToListAsync();
+                existingMovie.Languages = languages;
+            }
+
             await _context.SaveChangesAsync();
             return true;
-            
         }
 
         public async Task<bool> DeleteMovieAsync(string id)

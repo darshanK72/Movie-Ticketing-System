@@ -24,7 +24,7 @@ namespace MovieTicketingSystem.Domain.Entities
      
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
-        public ICollection<Show> ManagedShows { get; set; } = new List<Show>();
+        public ICollection<ShowTiming> ManagedShowTimings { get; set; } = new List<ShowTiming>();
 
         [Required]
         public bool IsActive { get; set; }

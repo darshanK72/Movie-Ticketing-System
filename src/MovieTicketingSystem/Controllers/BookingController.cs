@@ -7,7 +7,7 @@ using MovieTicketingSystem.Domain.DTOs;
 
 namespace MovieTicketingSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/bookings")]
     [ApiController]
     public class BookingController : ControllerBase
     {
@@ -56,15 +56,15 @@ namespace MovieTicketingSystem.Controllers
             return Ok(new { BookingId = bookingId, Message = "Booking created successfully. Please complete payment within 5 minutes." });
         }
 
-        [HttpPost("payment")]
-        public async Task<IActionResult> MakePayment([FromBody] ProcessPaymentCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (result == null)
-                return BadRequest(new { Message = "Failed to process payment" });
+        //[HttpPost("payment")]
+        //public async Task<IActionResult> MakePayment([FromBody] ProcessPaymentCommand command)
+        //{
+        //    var result = await _mediator.Send(command);
+        //    if (result == null)
+        //        return BadRequest(new { Message = "Failed to process payment" });
 
-            return Ok(new { Message = "Payment processed successfully. Your booking is confirmed." });
-        }
+        //    return Ok(new { Message = "Payment processed successfully. Your booking is confirmed." });
+        //}
 
         [HttpPost("{id}/cancel")]
         public async Task<IActionResult> CancelBooking(string id, [FromBody] string reason)

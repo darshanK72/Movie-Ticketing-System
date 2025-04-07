@@ -1,6 +1,7 @@
 using MediatR;
 using MovieTicketingSystem.Application.Commands.Bookings;
 using MovieTicketingSystem.Application.Repositories;
+using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Application.Handlers.Bookings
 {
@@ -19,7 +20,12 @@ namespace MovieTicketingSystem.Application.Handlers.Bookings
             if (booking == null)
                 return false;
 
-            booking.BookingStatus = Domain.Enums.BookingStatus.Confirmed;
+            foreach(var seat in booking.ShowSeats!)
+            {
+                seat.SeatBookingStatus = SeatBookingStatus.Reserved;
+            }
+
+            booking.BookingStatus = BookingStatus.Confirmed;
             booking.UpdatedAt = DateTime.UtcNow;
 
             return await _bookingRepository.UpdateBookingAsync(booking);

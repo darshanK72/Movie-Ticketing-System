@@ -11,7 +11,7 @@ namespace MovieTicketingSystem.Application.Validators.Bookings
                 .NotEmpty()
                 .WithMessage("User ID is required");
 
-            RuleFor(x => x.ShowId)
+            RuleFor(x => x.ShowTimingId)
                 .NotEmpty()
                 .WithMessage("Show ID is required");
 

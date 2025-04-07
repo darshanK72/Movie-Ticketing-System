@@ -16,7 +16,7 @@ namespace MovieTicketingSystem.Domain.DTOs
         public string? PosterUrl { get; set; }
         public string? TrailerUrl { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public CertificateRating CertificateRating { get; set; }
+        public string? CertificateRating { get; set; }
         public double? ViewerRating {  get; set; }
         public ICollection<ShowDTO>? Shows {get;set;}
     }

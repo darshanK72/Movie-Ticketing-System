@@ -1,65 +1,73 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using MovieTicketingSystem.Application.Commands.Shows;
+using MovieTicketingSystem.Application.Repositories;
+using MovieTicketingSystem.Application.Validators.Shows;
 using MovieTicketingSystem.Domain.Contracts.Repository;
+using MovieTicketingSystem.Domain.DTOs;
 using MovieTicketingSystem.Domain.Entities;
 
-namespace MovieTicketingSystem.Application.Commands.Shows
+namespace MovieTicketingSystem.Application.Handlers.Shows
 {
     public class UpdateShowCommandHandler : IRequestHandler<UpdateShowCommand, bool>
     {
         private readonly IShowRepository _showRepository;
-         private readonly IMovieRepository _movieRepository;
-        private readonly ITheaterRepository _theaterRepository;
-        private readonly IValidator<UpdateShowCommand> _validator;
+        private readonly IShowTimingRepository _showTimingRepository;
         private readonly IMapper _mapper;
+        private readonly IValidator<UpdateShowCommand> _validator;
 
-        public UpdateShowCommandHandler(IShowRepository showRepository,
-            IMovieRepository movieRepository,
-            ITheaterRepository theaterRepository,
-            IValidator<UpdateShowCommand> validator,
-            IMapper mapper)
+        public UpdateShowCommandHandler(
+            IShowRepository showRepository,
+            IShowTimingRepository showTimingRepository,
+            IMapper mapper,
+            IValidator<UpdateShowCommand> validator)
         {
             _showRepository = showRepository;
-            _movieRepository = movieRepository;
-            _theaterRepository = theaterRepository;
-            _validator = validator;
+            _showTimingRepository = showTimingRepository;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<bool> Handle(UpdateShowCommand request, CancellationToken cancellationToken)
         {
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);
             }
 
-            var show = await _showRepository.GetShowByIdAsync(request.Id!);
-            if (show == null)
-                throw new ValidationException($"Show with ID {request.Id} not found");
+            // Update the show
+            var show = _mapper.Map<Show>(request);
+            var showUpdated = await _showRepository.UpdateShowAsync(show);
+            if (!showUpdated)
+            {
+                return false;
+            }
 
-            var movie = await _movieRepository.GetMovieByIdAsync(request.MovieId!);
-            if (movie == null)
-                throw new ValidationException($"Movie with ID {request.MovieId} not found");
+            foreach (var timingDetails in request.ShowTimings)
+            {
+                var showTiming = new ShowTiming
+                {
+                    Id = Guid.Parse(timingDetails.Id!),
+                    ShowId = show.Id,
+                    Date = timingDetails.Date,
+                    StartTime = timingDetails.StartTime,
+                    EndTime = timingDetails.EndTime,
+                    BasePrice = timingDetails.BasePrice,
+                    ShowStatus = timingDetails.Status,
+                    ShowManagerId = timingDetails.ShowManagerId,
+                    IsActive = timingDetails.IsActive,
+                    UpdatedAt = DateTime.UtcNow
+                };
 
-            var theater = await _theaterRepository.GetTheaterByIdAsync(request.TheaterId!);
-            if (theater == null)
-                throw new ValidationException($"Theater with ID {request.TheaterId} not found");
+                await _showTimingRepository.UpdateShowTimingAsync(showTiming);
+            }
 
-            var cinemaHall = await _theaterRepository.GetCinemaHallByIdAsync(request.CinemaHallId!);
-            if (cinemaHall == null)
-                throw new ValidationException($"Cinema hall with ID {request.CinemaHallId} not found");
-
-            var updatedShow = _mapper.Map<Show>(request);
-
-            updatedShow.TotalSeats = cinemaHall.TotalSeats;
-            updatedShow.AvailableSeats = cinemaHall.TotalSeats;
-            
-            return await _showRepository.UpdateShowAsync(updatedShow);
+            return true;
         }
     }
 } 

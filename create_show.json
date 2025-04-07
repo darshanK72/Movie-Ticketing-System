@@ -1,0 +1,39 @@
+{
+  "movieId": "DE6A2FFC-FB80-453A-9CC1-172BD0E48022",
+  "cinemaHallId": "37371fc2-b946-4f23-4862-08dd75b75de9",
+  "basePrice": 12.99,
+  "showTimings": [
+    {
+      "date": "2025-08-15T00:00:00",
+      "startTime": "10:00:00",
+      "endTime": "12:00:00",
+      "basePrice": 12.99,
+      "status": 0,
+      "showManagerId": "e5b798bc-abac-4c26-a41f-b0452d0e3e3b"
+    },
+    {
+      "date": "2025-08-15T00:00:00",
+      "startTime": "13:30:00",
+      "endTime": "15:30:00",
+      "basePrice": 12.99,
+      "status": 0,
+      "showManagerId": "e5b798bc-abac-4c26-a41f-b0452d0e3e3b"
+    },
+    {
+      "date": "2025-08-15T00:00:00",
+      "startTime": "16:00:00",
+      "endTime": "18:00:00",
+      "basePrice": 14.99,
+      "status": 0,
+      "showManagerId": "e5b798bc-abac-4c26-a41f-b0452d0e3e3b"
+    },
+    {
+      "date": "2025-08-15T00:00:00",
+      "startTime": "19:30:00",
+      "endTime": "21:30:00",
+      "basePrice": 16.99,
+      "status": 0,
+      "showManagerId": "e5b798bc-abac-4c26-a41f-b0452d0e3e3b"
+    }
+  ]
+} 

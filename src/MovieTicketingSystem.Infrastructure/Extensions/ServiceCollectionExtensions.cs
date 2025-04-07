@@ -53,6 +53,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITheaterRepository, TheaterRepository>();
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IShowRepository, ShowRepository>();
+        services.AddScoped<IShowTimingRepository, ShowTimingRepository>();
+        services.AddScoped<IShowSeatRepository, ShowSeatRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 }

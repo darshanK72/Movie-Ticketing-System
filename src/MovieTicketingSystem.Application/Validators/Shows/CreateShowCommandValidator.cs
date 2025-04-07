@@ -16,6 +16,22 @@ namespace MovieTicketingSystem.Application.Validators.Shows
                 .NotEmpty()
                 .WithMessage("Cinema Hall ID is required");
 
+            RuleFor(x => x.BasePrice)
+                .GreaterThan(0)
+                .WithMessage("Base price must be greater than 0");
+
+            RuleFor(x => x.ShowTimings)
+                .NotEmpty()
+                .WithMessage("At least one show timing is required");
+
+            RuleForEach(x => x.ShowTimings).SetValidator(new ShowTimingDetailsValidator());
+        }
+    }
+
+    public class ShowTimingDetailsValidator : AbstractValidator<ShowTimingDetails>
+    {
+        public ShowTimingDetailsValidator()
+        {
             RuleFor(x => x.Date)
                 .NotEmpty()
                 .WithMessage("Date is required")
@@ -29,7 +45,7 @@ namespace MovieTicketingSystem.Application.Validators.Shows
             RuleFor(x => x.EndTime)
                 .NotEmpty()
                 .WithMessage("End time is required")
-                .Must((show, endTime) => endTime > show.StartTime)
+                .Must((timing, endTime) => endTime > timing.StartTime)
                 .WithMessage("End time must be after start time");
 
             RuleFor(x => x.BasePrice)

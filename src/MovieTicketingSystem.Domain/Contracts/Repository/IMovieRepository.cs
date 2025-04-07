@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MovieTicketingSystem.Domain.Entities;
@@ -11,7 +11,7 @@ namespace MovieTicketingSystem.Domain.Contracts.Repository
         Task<IEnumerable<Movie>> GetAllMoviesAsync();
         Task<Movie?> GetMovieByIdAsync(string id);
         Task<bool> CreateMovieAsync(Movie movie,IEnumerable<string> genreIds,IEnumerable<string> languageIds);
-        Task<bool> UpdateMovieAsync(Movie movie);
+        Task<bool> UpdateMovieAsync(Movie movie, IEnumerable<string> genreIds, IEnumerable<string> languageIds);
         Task<bool> DeleteMovieAsync(string id);
         Task<IEnumerable<Movie>> GetActiveMoviesAsync();
         Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre);

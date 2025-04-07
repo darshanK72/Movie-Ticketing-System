@@ -21,5 +21,7 @@ namespace MovieTicketingSystem.Domain.Contracts.Repository
         Task<Show?> GetShowWithSeatsAsync(string showId);
         Task<IEnumerable<Show>> GetUpcomingShowsAsync();
         Task<IEnumerable<Show>> GetTodayShowsAsync();
+        Task<IEnumerable<ShowTiming>> GetShowTimingsByShowIdAsync(Guid showId);
+        Task<IEnumerable<ShowSeat>> GetShowSeatsByShowTimingIdAsync(Guid showTimingId);
     }
 } 
