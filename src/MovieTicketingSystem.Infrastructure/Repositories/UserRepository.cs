@@ -70,14 +70,37 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             {
                 await _userManager.UpdateSecurityStampAsync(user);
                 
-                var token = await _userManager.GenerateUserTokenAsync(user, "Default", "Login");
+                var roles = await _userManager.GetRolesAsync(user);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Email, user.Email!),
+                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                    new Claim("FirstName", user.FirstName),
+                    new Claim("LastName", user.LastName)
+                };
+
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["Jwt:Issuer"],
+                    audience: _configuration["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:ExpireDays"])),
+                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                );
+
                 var refreshToken = await _userManager.GenerateUserTokenAsync(user, "Default", "RefreshToken");
 
                 return new TokenResponse()
                 {
-                    AccessToken = token,
+                    AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     RefreshToken = refreshToken,
-                    ExpiresIn = 3600
+                    ExpiresIn = (int)TimeSpan.FromDays(Convert.ToDouble(_configuration["Jwt:ExpireDays"])).TotalSeconds
                 };
             }
             return null;
@@ -127,14 +150,37 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             {
                 await _userManager.UpdateSecurityStampAsync(user);
                 
-                var newToken = await _userManager.GenerateUserTokenAsync(user, "Default", "Login");
+                var roles = await _userManager.GetRolesAsync(user);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Email, user.Email!),
+                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                    new Claim("FirstName", user.FirstName),
+                    new Claim("LastName", user.LastName)
+                };
+
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["Jwt:Issuer"],
+                    audience: _configuration["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:ExpireDays"])),
+                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                );
+
                 var newRefreshToken = await _userManager.GenerateUserTokenAsync(user, "Default", "RefreshToken");
 
                 return new TokenResponse()
                 {
-                    AccessToken = newToken,
+                    AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     RefreshToken = newRefreshToken,
-                    ExpiresIn = 3600
+                    ExpiresIn = (int)TimeSpan.FromDays(Convert.ToDouble(_configuration["Jwt:ExpireDays"])).TotalSeconds
                 };
             }
             return null;

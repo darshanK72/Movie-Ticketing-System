@@ -12,6 +12,7 @@ using MediatR;
 using MovieTicketingSystem.Application.Commands.Auth;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -53,6 +54,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Login([FromBody] LogoutUserCommand command)
         {
             var result = await _mediator.Send(command);

@@ -3,6 +3,8 @@ namespace MovieTicketingSystem.Domain.Enums
     public enum UserRole
     {
         User,
-        ShowManager
+        ShowManager,
+        Admin,
+        TheaterManager
     }
 } 

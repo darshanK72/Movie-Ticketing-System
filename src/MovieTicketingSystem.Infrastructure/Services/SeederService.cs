@@ -58,6 +58,14 @@ internal class SeederService : ISeederService
                 new (UserRole.ShowManager.ToString())
                 {
                     NormalizedName = UserRole.ShowManager.ToString().ToUpper()
+                }, 
+                new (UserRole.Admin.ToString())
+                {
+                    NormalizedName = UserRole.Admin.ToString().ToUpper()
+                },
+                new (UserRole.TheaterManager.ToString())
+                {
+                    NormalizedName = UserRole.TheaterManager.ToString().ToUpper()
                 }
             ];
 

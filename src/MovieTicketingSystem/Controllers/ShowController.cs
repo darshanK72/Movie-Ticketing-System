@@ -9,11 +9,15 @@ using MovieTicketingSystem.Domain.DTOs;
 using MovieTicketingSystem.Domain.Entities;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using MovieTicketingSystem.Infrastructure.Authorization;
+using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Controllers
 {
     [Route("api/shows")]
     [ApiController]
+    [Authorize]
     public class ShowController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,6 +28,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllShows()
         {
             var result = await _mediator.Send(new GetAllShowsQuery());
@@ -31,6 +36,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetShowById(string id)
         {
             var result = await _mediator.Send(new GetShowByIdQuery(id));
@@ -42,6 +48,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("movie/{movieId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetShowsByMovie(string movieId)
         {
             var result = await _mediator.Send(new GetShowsByMovieQuery(movieId));
@@ -49,6 +56,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("theater/{theaterId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetShowsByTheater(string theaterId)
         {
             var result = await _mediator.Send(new GetShowsByTheaterQuery(theaterId));
@@ -56,6 +64,7 @@ namespace MovieTicketingSystem.Controllers
         }   
 
         [HttpPost]
+        [RequireRole(UserRole.ShowManager)]
         public async Task<IActionResult> CreateShow([FromBody] CreateShowCommand command)
         {
             var result = await _mediator.Send(command);
@@ -66,6 +75,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequireRole(UserRole.ShowManager)]
         public async Task<IActionResult> UpdateShow(string id, [FromBody] UpdateShowCommand command)
         {
             if (id != command.Id)
@@ -79,6 +89,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequireRole(UserRole.ShowManager)]
         public async Task<IActionResult> DeleteShow(string id)
         {
             var result = await _mediator.Send(new DeleteShowCommand(id));
@@ -89,19 +100,8 @@ namespace MovieTicketingSystem.Controllers
             return Ok(new { Message = "Show Deleted Successfully" });
         }
 
-        // [HttpGet("{id}/seats")]
-        // public async Task<ActionResult<Show>> GetShowSeats(string id)
-        // {
-        //     var query = new GetShowSeatsQuery(id);
-        //     var result = await _mediator.Send(query);
-            
-        //     if (result == null)
-        //         return NotFound();
-
-        //     return Ok(result);
-        // }
-
         [HttpGet("upcoming")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetUpcomingShows()
         {
             var result = await _mediator.Send(new GetUpcomingShowsQuery());
@@ -109,6 +109,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("today")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTodayShows()
         {
             var result = await _mediator.Send(new GetTodayShowsQuery());
@@ -116,6 +117,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("{showId}/timings")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetShowTimings(string showId)
         {
             if (!Guid.TryParse(showId, out Guid guid))
@@ -126,6 +128,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("timings/{showTimingId}/seats")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetShowSeats(string showTimingId)
         {
             if (!Guid.TryParse(showTimingId, out Guid guid))

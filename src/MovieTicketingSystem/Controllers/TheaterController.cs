@@ -5,11 +5,15 @@ using MovieTicketingSystem.Application.Commands.Theaters;
 using MovieTicketingSystem.Application.Queries.Theaters;
 using MovieTicketingSystem.Domain.DTOs;
 using MovieTicketingSystem.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using MovieTicketingSystem.Domain.Enums;
+using MovieTicketingSystem.Infrastructure.Authorization;
 
 namespace MovieTicketingSystem.Controllers
 {
     [Route("api/theaters")]
     [ApiController]
+    [Authorize]
     public class TheaterController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -20,6 +24,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllTheaters()
         {
             var query = new GetAllTheatersQuery();
@@ -28,6 +33,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTheaterById(string id)
         {
             var query = new GetTheaterByIdQuery(id);
@@ -40,6 +46,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost]
+        [RequireRole(UserRole.TheaterManager)]
         public async Task<IActionResult> CreateTheater([FromBody] CreateTheaterCommand command)
         {
             var result = await _mediator.Send(command);
@@ -49,36 +56,8 @@ namespace MovieTicketingSystem.Controllers
             return BadRequest(new { Message = "Theater Creation Failed." });
         }
 
-        [HttpPost("bulk-create")]
-        public async Task<ActionResult> CreateCinemaHallInBulk([FromBody] IEnumerable<CreateCinemaHallCommand> commands)
-        {
-            if (commands == null || !commands.Any())
-            {
-                return BadRequest(new { Message = "No cinema halls provided for bulk creation." });
-            }
-
-            var results = new List<bool>();
-            foreach (var command in commands)
-            {
-                var result = await _mediator.Send(command);
-                results.Add(result);
-            }
-
-            if (results.All(r => r))
-            {
-                return Ok(new { Message = "All cinema halls created successfully." });
-            }
-            else if (results.Any(r => r))
-            {
-                return Ok(new { Message = "Some cinema halls were created successfully, while others failed." });
-            }
-            else
-            {
-                return BadRequest(new { Message = "Failed to create any cinema halls." });
-            }
-        }
-
         [HttpPut("{id}")]
+        [RequireRole(UserRole.TheaterManager)]
         public async Task<IActionResult> UpdateTheater(string id, [FromBody] UpdateTheaterCommand command)
         {
             command.Id = id;
@@ -91,6 +70,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequireRole(UserRole.TheaterManager)]
         public async Task<IActionResult> DeleteTheater(string id)
         {
             var command = new DeleteTheaterCommand(id);
@@ -103,6 +83,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("{id}/cinema-hall")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllCinemaHalls(string id)
         {
             var query = new GetCinemaHallsByTheaterIdQuery(id);
@@ -111,6 +92,7 @@ namespace MovieTicketingSystem.Controllers
         }
         
         [HttpGet("{id}/cinema-hall/{cinemaHallId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCinemaHallById(string id,string cinemaHallId)
         {
             var query = new GetCinemaHallByIdQuery(cinemaHallId);
@@ -119,6 +101,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost("{id}/cinema-hall")]
+        [RequireRole(UserRole.TheaterManager)]
         public async Task<IActionResult> CreateCinemaHall(string id, [FromBody] CreateCinemaHallCommand command)
         {
             command.TheaterId = id;
@@ -131,6 +114,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPut("{id}/cinema-hall/{cinemaHallId}")]
+        [RequireRole(UserRole.TheaterManager)]
         public async Task<IActionResult> UpdateCinemaHall(string id, string cinemaHallId, [FromBody] UpdateCinemaHallCommand command)
         {
             command.Id = cinemaHallId;
@@ -143,6 +127,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpDelete("{id}/cinema-hall/{cinemaHallId}")]
+        [RequireRole(UserRole.TheaterManager)]
         public async Task<IActionResult> DeleteCinemaHall(string id,string cinemaHallId)
         {
             var command = new DeleteCinemaHallCommand(cinemaHallId);

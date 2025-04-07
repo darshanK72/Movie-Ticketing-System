@@ -1,14 +1,18 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketingSystem.Application.Commands.Bookings;
 using MovieTicketingSystem.Application.Queries.Bookings;
 using MovieTicketingSystem.Domain.DTOs;
+using MovieTicketingSystem.Domain.Enums;
+using MovieTicketingSystem.Infrastructure.Authorization;
 
 namespace MovieTicketingSystem.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
+    [Authorize]
     public class BookingController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,6 +23,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet]
+        [RequireRole(UserRole.ShowManager)]
         public async Task<IActionResult> GetAllBookings()
         {
             var query = new GetAllBookingsQuery();
@@ -27,6 +32,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("{id}")]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> GetBookingById(string id)
         {
             var query = new GetBookingByIdQuery(id);
@@ -39,6 +45,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> GetUserBookings(string userId)
         {
             var query = new GetUserBookingsQuery(userId);
@@ -47,6 +54,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingCommand command)
         {
             var bookingId = await _mediator.Send(command);
@@ -56,17 +64,8 @@ namespace MovieTicketingSystem.Controllers
             return Ok(new { BookingId = bookingId, Message = "Booking created successfully. Please complete payment within 5 minutes." });
         }
 
-        //[HttpPost("payment")]
-        //public async Task<IActionResult> MakePayment([FromBody] ProcessPaymentCommand command)
-        //{
-        //    var result = await _mediator.Send(command);
-        //    if (result == null)
-        //        return BadRequest(new { Message = "Failed to process payment" });
-
-        //    return Ok(new { Message = "Payment processed successfully. Your booking is confirmed." });
-        //}
-
         [HttpPost("{id}/cancel")]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> CancelBooking(string id, [FromBody] string reason)
         {
             var command = new CancelBookingCommand
@@ -83,6 +82,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost("cancel-expired")]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> CancelExpiredBooking()
         {
             var command = new CancleExpiredBookingsCommand();
@@ -95,6 +95,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost("{id}/confirm")]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> ConfirmBooking(string id)
         {
             var command = new ConfirmBookingCommand { BookingId = id };

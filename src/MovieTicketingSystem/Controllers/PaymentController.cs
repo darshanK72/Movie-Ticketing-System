@@ -1,9 +1,12 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketingSystem.Application.Commands.Payments;
 using MovieTicketingSystem.Application.Queries.Payments;
 using MovieTicketingSystem.Domain.DTOs;
+using MovieTicketingSystem.Domain.Enums;
+using MovieTicketingSystem.Infrastructure.Authorization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +14,7 @@ namespace MovieTicketingSystem.Controllers
 {
     [Route("api/payments")]
     [ApiController]
+    [Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -21,6 +25,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("methods")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPaymentMethods()
         {
             var query = new GetPaymentMethodsQuery();
@@ -29,6 +34,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost("process")]
+        [RequireRole(UserRole.User)]
         public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequestDTO request)
         {
             var command = new ProcessPaymentCommand

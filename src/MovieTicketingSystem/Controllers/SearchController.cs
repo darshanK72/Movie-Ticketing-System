@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketingSystem.Application.Queries.Search;
@@ -8,6 +9,7 @@ namespace MovieTicketingSystem.Controllers
 {
     [Route("api/search")]
     [ApiController]
+    [Authorize]
     public class SearchController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -18,8 +20,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(SearchResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> Search([FromQuery] SearchQuery query)
         {
             var result = await _mediator.Send(query);

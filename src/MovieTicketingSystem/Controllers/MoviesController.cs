@@ -5,6 +5,8 @@ using MovieTicketingSystem.Domain.Enums;
 using MovieTicketingSystem.Application.Queries.Movies;
 using MovieTicketingSystem.Application.Commands.Movies;
 using MovieTicketingSystem.Application.Handlers.Movies;
+using MovieTicketingSystem.Infrastructure.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -20,6 +22,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllMovies()
         {
             var query = new GetAllMoviesQuery();
@@ -28,6 +31,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetMovieById(string id)
         {
             var query = new GetMovieByIdQuery(id);
@@ -40,6 +44,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPost]
+        [RequireRole(UserRole.Admin)]
         public async Task<IActionResult> CreateMovie([FromBody] CreateMovieCommand command)
         {
             var result = await _mediator.Send(command);
@@ -50,6 +55,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequireRole(UserRole.Admin)]
         public async Task<IActionResult> UpdateMovie(string id, [FromBody] UpdateMovieCommand command)
         {
             command.Id = id;
@@ -62,6 +68,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequireRole(UserRole.Admin)]
         public async Task<IActionResult> DeleteMovie(string id)
         {
             var command = new DeleteMovieCommand(id);
@@ -74,6 +81,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("active")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetActiveMovies()
         {
             var query = new GetActiveMoviesQuery();
@@ -82,6 +90,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("genre/{genre}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetMoviesByGenre(string genre)
         {
             var query = new GetMoviesByGenreQuery(genre);
@@ -90,6 +99,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("language/{language}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetMoviesByLanguage(string language)
         {
             var query = new GetMoviesByLanguageQuery(language);
@@ -98,6 +108,7 @@ namespace MovieTicketingSystem.Controllers
         }
 
         [HttpGet("rating/{certificateRrating}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetMoviesByRating(CertificateRating certificateRrating)
         {
             var query = new GetMoviesByRatingQuery(certificateRrating);
