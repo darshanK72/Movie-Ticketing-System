@@ -22,6 +22,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\src\MovieTicketingSystem.Application\MovieTicketingSystem.Application.csproj" />
+	  <ProjectReference Include="..\..\src\MovieTicketingSystem.Infrastructure\MovieTicketingSystem.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
