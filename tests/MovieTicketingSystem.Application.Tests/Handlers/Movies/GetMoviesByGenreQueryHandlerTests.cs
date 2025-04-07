@@ -9,25 +9,28 @@ using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Domain.Enums;
 using Xunit;
 
-namespace MovieTicketingSystem.Application.Tests.Handlers.Movies.Queries
+namespace MovieTicketingSystem.Application.Tests.Handlers.Movies
 {
-    public class GetAllMoviesQueryHandlerTests
+    public class GetMoviesByGenreQueryHandlerTests
     {
         private readonly Mock<IMovieRepository> _movieRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly GetAllMoviesQueryHandler _handler;
+        private readonly GetMoviesByGenreQueryHandler _handler;
 
-        public GetAllMoviesQueryHandlerTests()
+        public GetMoviesByGenreQueryHandlerTests()
         {
             _movieRepositoryMock = new Mock<IMovieRepository>();
             _mapperMock = new Mock<IMapper>();
-            _handler = new GetAllMoviesQueryHandler(_movieRepositoryMock.Object, _mapperMock.Object);
+            _handler = new GetMoviesByGenreQueryHandler(_movieRepositoryMock.Object, _mapperMock.Object);
         }
 
         [Fact]
-        public async Task Handle_WhenMoviesExist_ReturnsMovieDTOs()
+        public async Task Handle_ValidGenreId_ReturnsMovies()
         {
             // Arrange
+            var genreId = Guid.NewGuid();
+            var query = new GetMoviesByGenreQuery(genreId.ToString());
+
             var movies = new List<Movie>
             {
                 new Movie
@@ -37,10 +40,12 @@ namespace MovieTicketingSystem.Application.Tests.Handlers.Movies.Queries
                     Description = "Description 1",
                     DurationInMinutes = 120,
                     Director = "Director 1",
+                    Genres = new List<Genre> { new Genre { Id = genreId, Name = "Action" } },
                     ReleaseDate = DateTime.UtcNow,
                     CertificateRating = CertificateRating.UA,
                     ViewerRating = 4.5,
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow.AddDays(-30)
                 },
                 new Movie
                 {
@@ -49,10 +54,12 @@ namespace MovieTicketingSystem.Application.Tests.Handlers.Movies.Queries
                     Description = "Description 2",
                     DurationInMinutes = 150,
                     Director = "Director 2",
-                    ReleaseDate = DateTime.UtcNow,
+                    Genres = new List<Genre> { new Genre { Id = genreId, Name = "Action" } },
+                    ReleaseDate = DateTime.UtcNow.AddDays(7),
                     CertificateRating = CertificateRating.A,
                     ViewerRating = 4.0,
-                    IsActive = true
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow.AddDays(-15)
                 }
             };
 
@@ -69,42 +76,38 @@ namespace MovieTicketingSystem.Application.Tests.Handlers.Movies.Queries
             }).ToList();
 
             _movieRepositoryMock
-                .Setup(x => x.GetAllMoviesAsync())
+                .Setup(x => x.GetMoviesByGenreAsync(genreId.ToString()))
                 .ReturnsAsync(movies);
 
             _mapperMock
                 .Setup(x => x.Map<IEnumerable<MovieDTO>>(movies))
                 .Returns(movieDtos);
-
-            var query = new GetAllMoviesQuery();
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(movieDtos);
             result.Should().HaveCount(2);
-            _movieRepositoryMock.Verify(x => x.GetAllMoviesAsync(), Times.Once);
+            result.Should().BeEquivalentTo(movieDtos);
+            _movieRepositoryMock.Verify(x => x.GetMoviesByGenreAsync(genreId.ToString()), Times.Once);
             _mapperMock.Verify(x => x.Map<IEnumerable<MovieDTO>>(movies), Times.Once);
         }
 
         [Fact]
-        public async Task Handle_WhenNoMoviesExist_ReturnsEmptyList()
+        public async Task Handle_NoMoviesFound_ReturnsEmptyList()
         {
             // Arrange
-            var movies = new List<Movie>();
-            var movieDtos = new List<MovieDTO>();
+            var genreId = "nonexistent-genre";
+            var query = new GetMoviesByGenreQuery(genreId);
 
             _movieRepositoryMock
-                .Setup(x => x.GetAllMoviesAsync())
-                .ReturnsAsync(movies);
+                .Setup(x => x.GetMoviesByGenreAsync(genreId))
+                .ReturnsAsync(new List<Movie>());
 
             _mapperMock
-                .Setup(x => x.Map<IEnumerable<MovieDTO>>(movies))
-                .Returns(movieDtos);
-
-            var query = new GetAllMoviesQuery();
+                .Setup(x => x.Map<IEnumerable<MovieDTO>>(new List<Movie>()))
+                .Returns(new List<MovieDTO>());
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
@@ -112,8 +115,8 @@ namespace MovieTicketingSystem.Application.Tests.Handlers.Movies.Queries
             // Assert
             result.Should().NotBeNull();
             result.Should().BeEmpty();
-            _movieRepositoryMock.Verify(x => x.GetAllMoviesAsync(), Times.Once);
-            _mapperMock.Verify(x => x.Map<IEnumerable<MovieDTO>>(movies), Times.Once);
+            _movieRepositoryMock.Verify(x => x.GetMoviesByGenreAsync(genreId), Times.Once);
+            _mapperMock.Verify(x => x.Map<IEnumerable<MovieDTO>>(new List<Movie>()), Times.Once);
         }
     }
 } 

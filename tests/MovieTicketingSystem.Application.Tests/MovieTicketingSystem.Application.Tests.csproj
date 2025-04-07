@@ -26,4 +26,8 @@
 		<ProjectReference Include="..\..\src\MovieTicketingSystem.Domain\MovieTicketingSystem.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Handlers\Auth\" />
+	</ItemGroup>
+
 </Project>

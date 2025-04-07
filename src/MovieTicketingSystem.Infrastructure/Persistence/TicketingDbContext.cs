@@ -44,6 +44,16 @@ public class TicketingDbContext : IdentityDbContext<User>
             entity.Property(e => e.CreatedAt).IsRequired();
         });
 
+        modelBuilder.Entity<Movie>()
+            .HasMany(m => m.Genres)
+            .WithMany(g => g.Movies)
+            .UsingEntity(j => j.ToTable("MovieGenres"));
+
+        modelBuilder.Entity<Movie>()
+            .HasMany(m => m.Languages)
+            .WithMany(l => l.Movies)
+            .UsingEntity(j => j.ToTable("MovieLanguages"));
+
         modelBuilder.Entity<Show>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -220,15 +230,5 @@ public class TicketingDbContext : IdentityDbContext<User>
             entity.Property(e => e.Country).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Details).HasMaxLength(500);
         });
-
-        modelBuilder.Entity<Movie>()
-            .HasMany(m => m.Genres)
-            .WithMany(g => g.Movies)
-            .UsingEntity(j => j.ToTable("MovieGenres"));
-
-        modelBuilder.Entity<Movie>()
-            .HasMany(m => m.Languages)
-            .WithMany(l => l.Movies)
-            .UsingEntity(j => j.ToTable("MovieLanguages"));
     }
 }

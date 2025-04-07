@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MovieTicketingSystem.Domain.Entities;
-using MovieTicketingSystem.Application.Common;
 
 namespace MovieTicketingSystem.Domain.Contracts.Repository
 {
@@ -12,7 +11,6 @@ namespace MovieTicketingSystem.Domain.Contracts.Repository
         Task<IEnumerable<Show>> GetAllShowsAsync();
         Task<IEnumerable<Show>> GetShowsByMovieAsync(string movieId);
         Task<IEnumerable<Show>> GetShowsByTheaterAsync(string theaterId);
-        Task<PagedResult<Show>> GetShowsPagedAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<bool> CreateShowAsync(Show show);
         Task<bool> UpdateShowAsync(Show show);
         Task<bool> DeleteShowAsync(string id);

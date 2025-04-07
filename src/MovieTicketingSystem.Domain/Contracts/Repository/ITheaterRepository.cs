@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MovieTicketingSystem.Domain.Entities;
-using MovieTicketingSystem.Application.Common;
 
 namespace MovieTicketingSystem.Domain.Contracts.Repository
 {
@@ -11,7 +10,6 @@ namespace MovieTicketingSystem.Domain.Contracts.Repository
         Task<Theater?> GetTheaterByIdAsync(string id);
         Task<IEnumerable<Theater>> GetAllTheatersAsync();
         Task<IEnumerable<Theater>> GetTheatersByCityAsync(string city);
-        Task<PagedResult<Theater>> GetTheatersPagedAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<bool> CreateTheaterAsync(Theater theater, Address address);
         Task<bool> UpdateTheaterAsync(Theater theater,Address address);
         Task<bool> DeleteTheaterAsync(string id);

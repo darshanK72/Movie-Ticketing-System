@@ -17,10 +17,7 @@ namespace MovieTicketingSystem.Application.Mappings
                 .ForMember(dest => dest.CinemaHallId, opt => opt.MapFrom(src => src.CinemaHallId.ToString()))
                 .ForMember(dest => dest.CinemaHallName, opt => opt.MapFrom(src => src.CinemaHall!.Name))
                 .ForMember(dest => dest.TheaterId, opt => opt.MapFrom(src => src.CinemaHall!.TheaterId.ToString()))
-                .ForMember(dest => dest.TheaterName, opt => opt.MapFrom(src => src.CinemaHall!.Theater!.Name))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+                .ForMember(dest => dest.TheaterName, opt => opt.MapFrom(src => src.CinemaHall!.Theater!.Name));
 
             CreateMap<ShowDTO, Show>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.Parse(src.Id!)))

@@ -56,7 +56,7 @@ namespace MovieTicketingSystem.Application.Commands.Bookings
             }
 
             var booking = await _bookingRepository.CreateInitialBookingAsync(
-                request.UserId,
+                request.UserId!,
                 request.ShowTimingId,
                 request.SeatIds);
 

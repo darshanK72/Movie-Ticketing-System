@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Infrastructure.Persistence;
-using MovieTicketingSystem.Application.Common;
 using MovieTicketingSystem.Domain.Exceptions;
 using MovieTicketingSystem.Application.Services;
 
@@ -43,31 +42,6 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 .Include(t => t.Address)
                 .Where(t => t.Address!.City!.ToLower() == city.ToLower())
                 .ToListAsync();
-        }
-
-        public async Task<PagedResult<Theater>> GetTheatersPagedAsync(int pageNumber, int pageSize, string? searchTerm = null)
-        {
-            var query = _context.Theaters
-                .Include(t => t.Address)
-                .Include(t => t.CinemaHalls)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(searchTerm))
-            {
-                searchTerm = searchTerm.ToLower();
-                query = query.Where(t => 
-                    t.Name!.ToLower().Contains(searchTerm) || 
-                    t.Description!.ToLower().Contains(searchTerm) ||
-                    t.Email!.ToLower().Contains(searchTerm));
-            }
-
-            var totalCount = await query.CountAsync();
-            var items = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return new PagedResult<Theater>(items, totalCount, pageSize, pageNumber);
         }
 
         public async Task<bool> CreateTheaterAsync(Theater theater, Address address)

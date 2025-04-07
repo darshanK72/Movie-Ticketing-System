@@ -13,9 +13,6 @@ namespace MovieTicketingSystem.Domain.DTOs
         public string? CinemaHallName { get; set; }
         public string? TheaterId { get; set; }
         public string? TheaterName { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
         public ICollection<ShowTimingDTO>? ShowTimings { get; set; }
     }
 } 

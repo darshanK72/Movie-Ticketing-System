@@ -265,7 +265,6 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 return false;
             }
         }
-
         public async Task<bool> UpdateShowSeatsAsync(List<ShowSeat> showSeats)
         {
             try

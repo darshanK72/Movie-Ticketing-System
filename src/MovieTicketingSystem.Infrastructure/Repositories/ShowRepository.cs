@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using MovieTicketingSystem.Domain.Contracts.Repository;
 using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Infrastructure.Persistence;
-using MovieTicketingSystem.Application.Common;
 using MovieTicketingSystem.Domain.Exceptions;
 using MovieTicketingSystem.Domain.Enums;
 using MovieTicketingSystem.Application.Repositories;
@@ -85,35 +84,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<PagedResult<Show>> GetShowsPagedAsync(int pageNumber, int pageSize, string? searchTerm = null)
-        {
-            var query = _context.Shows
-                .Include(s => s.Movie)
-                .Include(s => s.CinemaHall).ThenInclude(ch => ch!.Theater)
-                .Include(s => s.ShowTimings)
-                    .ThenInclude(st => st.ShowManager)
-                .Include(s => s.ShowTimings)
-                    .ThenInclude(st => st.ShowSeats)
-                        .ThenInclude(ss => ss.Seat)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(searchTerm))
-            {
-                searchTerm = searchTerm.ToLower();
-                query = query.Where(s => 
-                    s.Movie!.Title!.ToLower().Contains(searchTerm) || 
-                    s.Movie!.Description!.ToLower().Contains(searchTerm));
-            }
-
-            var totalCount = await query.CountAsync();
-            var items = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return new PagedResult<Show>(items, totalCount, pageSize, pageNumber);
-        }
-
+        
         public async Task<bool> CreateShowAsync(Show show)
         {
             await _context.Shows.AddAsync(show);

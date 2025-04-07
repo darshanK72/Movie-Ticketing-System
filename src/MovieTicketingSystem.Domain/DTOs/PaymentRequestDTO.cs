@@ -6,7 +6,7 @@ namespace MovieTicketingSystem.Domain.DTOs
 {
     public class PaymentRequestDTO
     {
-        public string BookingId { get; set; }
+        public string? BookingId { get; set; }
         public decimal Amount { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public Dictionary<string, string> PaymentDetails { get; set; } = new Dictionary<string, string>();

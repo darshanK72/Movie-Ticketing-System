@@ -9,7 +9,7 @@ using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Domain.Enums;
 using Xunit;
 
-namespace MovieTicketingSystem.Application.Tests.Handlers.Movies.Queries
+namespace MovieTicketingSystem.Application.Tests.Handlers.Movies
 {
     public class GetMovieByIdQueryHandlerTests
     {
