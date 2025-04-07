@@ -48,6 +48,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ISeederService, SeederService>();
         services.AddSingleton<ISeatGenerationService,SeatGenerationService>();
+        services.AddSingleton<ITicketPdfService,TicketPdfService>();
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITheaterRepository, TheaterRepository>();

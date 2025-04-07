@@ -27,8 +27,10 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
         public async Task<Booking?> GetByIdAsync(string id)
         {
             return await _context.Bookings
-                .Include(b => b.ShowSeats)
+                .Include(b => b.User)
+                .Include(b => b.ShowSeats!)
                     .ThenInclude(ss => ss.Seat)
+                .Include(b => b.ShowTiming)
                 .Include(b => b.Payments)
                 .FirstOrDefaultAsync(b => b.Id.ToString() == id);
         }

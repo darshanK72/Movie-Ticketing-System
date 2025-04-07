@@ -31,7 +31,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                         .ThenInclude(ch => ch!.Theater)
                 .Include(st => st.ShowManager)
                 .Include(st => st.Bookings)
-                .Include(st => st.ShowSeats)
+                .Include(st => st.ShowSeats!)
                     .ThenInclude(ss => ss.Seat)
                 .FirstOrDefaultAsync(st => st.Id == guidId);
         }
@@ -49,7 +49,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                         .ThenInclude(ch => ch!.Theater)
                 .Include(st => st.ShowManager)
                 .Include(st => st.Bookings)
-                .Include(st => st.ShowSeats)
+                .Include(st => st.ShowSeats!)
                     .ThenInclude(ss => ss.Seat)
                 .Where(st => st.ShowId == guidShowId)
                 .OrderBy(st => st.Date)
@@ -67,7 +67,7 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
                         .ThenInclude(ch => ch!.Theater)
                 .Include(st => st.ShowManager)
                 .Include(st => st.Bookings)
-                .Include(st => st.ShowSeats)
+                .Include(st => st.ShowSeats!)
                     .ThenInclude(ss => ss.Seat)
                 .OrderBy(st => st.Date)
                 .ThenBy(st => st.StartTime)

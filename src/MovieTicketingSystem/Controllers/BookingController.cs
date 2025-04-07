@@ -7,6 +7,9 @@ using MovieTicketingSystem.Application.Queries.Bookings;
 using MovieTicketingSystem.Domain.DTOs;
 using MovieTicketingSystem.Domain.Enums;
 using MovieTicketingSystem.Infrastructure.Authorization;
+using MovieTicketingSystem.Infrastructure.Services;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace MovieTicketingSystem.Controllers
 {
@@ -16,7 +19,6 @@ namespace MovieTicketingSystem.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IMediator _mediator;
-
         public BookingController(IMediator mediator)
         {
             _mediator = mediator;
@@ -105,6 +107,18 @@ namespace MovieTicketingSystem.Controllers
                 return BadRequest(new { Message = "Failed to confirm booking" });
 
             return Ok(new { Message = "Booking confirmed successfully" });
+        }
+
+        [HttpGet("{id}/ticket")]
+        public async Task<IActionResult> DownloadTicket(string id)
+        {
+           var command = new DownloadBookingTicketCommand(id);
+           var ticket = await _mediator.Send(command);
+
+           if (ticket == null)
+               return NotFound("Booking not found");
+
+           return File(ticket, "application/pdf", $"ticket-{id}.pdf");
         }
     }
 }
