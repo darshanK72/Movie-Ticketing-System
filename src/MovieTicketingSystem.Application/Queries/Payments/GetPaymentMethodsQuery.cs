@@ -1,6 +1,7 @@
 using MediatR;
 using System.Collections.Generic;
 using MovieTicketingSystem.Domain.DTOs;
+using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Application.Queries.Payments
 {

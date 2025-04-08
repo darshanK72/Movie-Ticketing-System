@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using MovieTicketingSystem.Application.Queries.Payments;
 using MovieTicketingSystem.Domain.DTOs;
+using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Application.Queries.Payments
 {

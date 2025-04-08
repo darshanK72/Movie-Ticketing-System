@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace MovieTicketingSystem.Middlewares;
 
-public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : IMiddleware
+public class ErrorHandlingMiddleware : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -16,10 +16,9 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         {
             context.Response.StatusCode = 404;
             context.Response.ContentType = "application/json";
-            var response = new { Message = notFound.Message };
+            var response = new { notFound.Message };
             await context.Response.WriteAsync(JsonSerializer.Serialize(response));
 
-            logger.LogWarning(notFound.Message);
         }
         catch (ForbidException)
         {
@@ -30,8 +29,6 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         }
         catch (DbUpdateException dbUpdateEx)
         {
-            logger.LogError(dbUpdateEx, "Database update error occurred");
-            
             context.Response.ContentType = "application/json";
             if (dbUpdateEx.InnerException?.Message.Contains("REFERENCE constraint") == true)
             {
@@ -48,8 +45,6 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
-
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
             var response = new { Message = "Something went wrong" };

@@ -31,7 +31,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetAllShows()
         {
-            var result = await _mediator.Send(new GetAllShowsQuery());
+            var query = new GetAllShowsQuery();
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 
@@ -39,7 +40,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetShowById(string id)
         {
-            var result = await _mediator.Send(new GetShowByIdQuery(id));
+            var query = new GetShowByIdQuery(id);
+            var result = await _mediator.Send(query);
             
             if (result == null)
                 return NotFound(new { Message = "Show Not Found" });
@@ -51,7 +53,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetShowsByMovie(string movieId)
         {
-            var result = await _mediator.Send(new GetShowsByMovieQuery(movieId));
+            var query = new GetShowsByMovieQuery(movieId);
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 
@@ -59,7 +62,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetShowsByTheater(string theaterId)
         {
-            var result = await _mediator.Send(new GetShowsByTheaterQuery(theaterId));
+            var query = new GetShowsByTheaterQuery(theaterId);
+            var result = await _mediator.Send(query);
             return Ok(result);
         }   
 
@@ -92,7 +96,8 @@ namespace MovieTicketingSystem.Controllers
         [RequireRole(UserRole.ShowManager)]
         public async Task<IActionResult> DeleteShow(string id)
         {
-            var result = await _mediator.Send(new DeleteShowCommand(id));
+            var query = new DeleteShowCommand(id);
+            var result = await _mediator.Send(query);
             
             if (!result)
                 return NotFound(new { Message = "Show Not Found" });
@@ -104,7 +109,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetUpcomingShows()
         {
-            var result = await _mediator.Send(new GetUpcomingShowsQuery());
+            var query = new GetUpcomingShowsQuery();
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 
@@ -112,7 +118,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetTodayShows()
         {
-            var result = await _mediator.Send(new GetTodayShowsQuery());
+            var query = new GetTodayShowsQuery();
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 
@@ -120,10 +127,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetShowTimings(string showId)
         {
-            if (!Guid.TryParse(showId, out Guid guid))
-                return BadRequest(new { Message = "Invalid Show ID format" });
-
-            var result = await _mediator.Send(new GetShowTimingsByShowIdQuery(guid));
+            var query = new GetShowTimingsByShowIdQuery(Guid.Parse(showId));
+           var result = await _mediator.Send(query);
             return Ok(result);
         }
 
@@ -131,10 +136,8 @@ namespace MovieTicketingSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetShowSeats(string showTimingId)
         {
-            if (!Guid.TryParse(showTimingId, out Guid guid))
-                return BadRequest(new { Message = "Invalid Show Timing ID format" });
-
-            var result = await _mediator.Send(new GetShowSeatsByShowTimingIdQuery(guid));
+            var query = new GetShowSeatsByShowTimingIdQuery(Guid.Parse(showTimingId));
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }

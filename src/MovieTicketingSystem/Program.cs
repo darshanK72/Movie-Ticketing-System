@@ -1,11 +1,9 @@
 using MovieTicketingSystem.Extensions;
 using MovieTicketingSystem.Middlewares;
 using MovieTicketingSystem.Application.Extensions;
-using MovieTicketingSystem.Domain.Entities;
 using MovieTicketingSystem.Infrastructure.Extensions;
 using MovieTicketingSystem.Domain.Contracts.Services;
 using MovieTicketingSystem.Infrastructure.Persistence;
-using Microsoft.Extensions.Logging;
 using MovieTicketingSystem.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,7 +42,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseMiddleware<RequestTimeLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

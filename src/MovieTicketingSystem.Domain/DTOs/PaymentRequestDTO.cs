@@ -12,12 +12,5 @@ namespace MovieTicketingSystem.Domain.DTOs
         public Dictionary<string, string> PaymentDetails { get; set; } = new Dictionary<string, string>();
     }
 
-    public enum PaymentMethod
-    {
-        CreditCard,
-        DebitCard,
-        UPI,
-        NetBanking,
-        Wallet
-    }
+  
 } 

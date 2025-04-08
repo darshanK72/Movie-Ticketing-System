@@ -45,15 +45,12 @@ namespace MovieTicketingSystem.Controllers
                 PaymentDetails = request.PaymentDetails
             };
 
-            try
-            {
-                var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            if(result != null)
                 return Ok(result);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            
+            return BadRequest(new { Message = "Payment Process Failed." });
         }
     }
 } 

@@ -1,5 +1,6 @@
 using MediatR;
 using MovieTicketingSystem.Domain.DTOs;
+using MovieTicketingSystem.Domain.Enums;
 
 namespace MovieTicketingSystem.Application.Commands.Payments
 {

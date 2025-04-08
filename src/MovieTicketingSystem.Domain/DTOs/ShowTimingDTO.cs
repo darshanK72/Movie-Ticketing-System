@@ -16,6 +16,5 @@ namespace MovieTicketingSystem.Domain.DTOs
         public int AvailableSeats { get; set; }
         public decimal BasePrice { get; set; }
         public string? ShowStatus { get; set; }
-        public ICollection<BookingDTO>? Bookings { get; set; }
     }
 } 

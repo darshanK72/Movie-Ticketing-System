@@ -13,6 +13,5 @@ namespace MovieTicketingSystem.Domain.DTOs
         public string? CinemaHallName { get; set; }
         public string? TheaterId { get; set; }
         public string? TheaterName { get; set; }
-        public ICollection<ShowTimingDTO>? ShowTimings { get; set; }
     }
 } 
