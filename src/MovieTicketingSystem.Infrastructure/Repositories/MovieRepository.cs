@@ -60,7 +60,6 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             if (existingMovie == null)
                 return false;
 
-            // Update basic properties
             existingMovie.Title = movie.Title;
             existingMovie.Description = movie.Description;
             existingMovie.DurationInMinutes = movie.DurationInMinutes;
@@ -72,15 +71,13 @@ namespace MovieTicketingSystem.Infrastructure.Repositories
             existingMovie.ViewerRating = movie.ViewerRating;
             existingMovie.UpdatedAt = DateTime.UtcNow;
 
-            // Update genres
             if (genreIds != null && genreIds.Any())
             {
                 var genreGuids = genreIds.Select(id => Guid.Parse(id)).ToList();
                 var genres = await _context.Genres.Where(g => genreGuids.Contains(g.Id)).ToListAsync();
                 existingMovie.Genres = genres;
             }
-
-            // Update languages
+            
             if (languageIds != null && languageIds.Any())
             {
                 var languageGuids = languageIds.Select(id => Guid.Parse(id)).ToList();

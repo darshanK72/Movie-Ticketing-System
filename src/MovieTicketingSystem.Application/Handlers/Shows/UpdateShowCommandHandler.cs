@@ -40,7 +40,6 @@ namespace MovieTicketingSystem.Application.Handlers.Shows
                 throw new ValidationException(validationResult.Errors);
             }
 
-            // Update the show
             var show = _mapper.Map<Show>(request);
             var showUpdated = await _showRepository.UpdateShowAsync(show);
             if (!showUpdated)
